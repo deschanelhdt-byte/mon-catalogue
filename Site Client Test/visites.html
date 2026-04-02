@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1e293b" />
+
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui;
+        background: #0f172a;
+        color: white;
+      }
+
+      header {
+        padding: 14px;
+        background: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .back {
+        cursor: pointer;
+        font-size: 20px;
+      }
+
+      .container {
+        padding: 16px;
+      }
+
+      /* SELECT MODERNE */
+      select {
+        width: 100%;
+        padding: 14px;
+        border-radius: 12px;
+        border: none;
+        background: rgba(255, 255, 255, 0.06);
+        color: white;
+        margin-bottom: 20px;
+        backdrop-filter: blur(10px);
+      }
+
+      /* GRAPH */
+      canvas {
+        width: 100%;
+        height: 220px;
+      }
+
+      /* TOTAL */
+      .total {
+        margin-top: 14px;
+        font-size: 14px;
+        opacity: 0.6;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="back" onclick="back()">⬅️</div>
+      <b>Visites</b>
+    </header>
+
+    <div class="container">
+      <select id="period" onchange="loadData()">
+        <option value="day">Aujourd'hui</option>
+        <option value="week">7 jours</option>
+        <option value="month">30 jours</option>
+      </select>
+
+      <canvas id="chart"></canvas>
+
+      <div class="total" id="total"></div>
+    </div>
+
+    <script>
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+      if (!user) location.href = "auth.html";
+
+      let visitsData = JSON.parse(localStorage.getItem("visitsData") || "{}");
+
+      function getDate(offset = 0) {
+        const d = new Date();
+        d.setDate(d.getDate() - offset);
+        return d.toISOString().split("T")[0];
+      }
+
+      function loadData() {
+        // 🔥 IMPORTANT : recharger les données à chaque fois
+        let visitsData = JSON.parse(localStorage.getItem("visitsData") || "{}");
+
+        const period = document.getElementById("period").value;
+
+        let labels = [];
+        let data = [];
+
+        let days = 1;
+
+        if (period === "week") days = 7;
+        if (period === "month") days = 30;
+
+        // 🔥 construire les données
+        for (let i = days - 1; i >= 0; i--) {
+          const date = getDate(i);
+
+          labels.push(date.slice(5));
+          data.push(visitsData[date] || 0);
+        }
+
+        // 🔥 total dynamique CORRECT
+        const total = data.reduce((sum, val) => sum + val, 0);
+
+        document.getElementById("total").textContent =
+          total + " visites sur la période";
+
+        drawChart(labels, data);
+      }
+      window.addEventListener("focus", loadData);
+      /* 🎨 GRAPH MODERNE */
+      function drawChart(labels, data) {
+        const canvas = document.getElementById("chart");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = canvas.offsetWidth;
+        canvas.height = 220;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const max = Math.max(...data, 10);
+        const stepX =
+          data.length > 1 ? canvas.width / (data.length - 1) : canvas.width / 2;
+
+        /* === GRADIENT === */
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, "rgba(34,197,94,0.4)");
+        gradient.addColorStop(1, "rgba(34,197,94,0)");
+
+        /* === POINTS === */
+        let points = [];
+
+        data.forEach((value, i) => {
+          const x = i * stepX;
+          const y = canvas.height - (value / max) * canvas.height;
+          points.push({ x, y });
+        });
+
+        /* === LIGNE ZIGZAG === */
+        ctx.beginPath();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#22c55e";
+        ctx.shadowColor = "#22c55e";
+        ctx.shadowBlur = 8;
+
+        ctx.moveTo(points[0].x, points[0].y);
+
+        // 🔥 courbe fluide style marché financier
+        for (let i = 0; i < points.length - 1; i++) {
+          const xc = (points[i].x + points[i + 1].x) / 2;
+          const yc = (points[i].y + points[i + 1].y) / 2;
+
+          ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+        }
+
+        const lineGradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        lineGradient.addColorStop(0, "#22c55e");
+        lineGradient.addColorStop(1, "#4ade80");
+
+        ctx.strokeStyle = lineGradient;
+
+        ctx.stroke();
+
+        /* === FILL (optionnel moderne) === */
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.lineTo(0, canvas.height);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        /* === POINTS VISUELS === */
+        points.forEach((p) => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+          ctx.fillStyle = "#22c55e";
+          ctx.fill();
+        });
+
+        if (data.length === 1) {
+          const x = canvas.width / 2;
+          const y = canvas.height - (data[0] / max) * canvas.height;
+
+          ctx.beginPath();
+          ctx.arc(x, y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = "#22c55e";
+          ctx.fill();
+          return;
+        }
+      }
+
+      loadData();
+
+      function back() {
+        location.href = "dashboard.html";
+      }
+    </script>
+  </body>
+</html>

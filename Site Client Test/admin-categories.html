@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1e293b" />
+
+    <title>Gestion des catégories</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui;
+        background: #f4f6fb;
+        padding-bottom: var(--bottom-nav-height); /* espace pour la navbar */
+      }
+
+      .admin-header {
+        display: flex;
+        align-items: center;
+        padding: 14px 16px;
+        background: white;
+        border-bottom: 1px solid #eee;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: #0b5cff;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        font-weight: 600;
+      }
+      h2 {
+        font-size: 20px;
+      }
+
+      h3 {
+        font-size: 17px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 580px;
+        margin: 12px auto;
+      }
+
+      .card {
+        background: transparent;
+        padding: 16px;
+        border-radius: 16px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        font-size: 15px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+      }
+
+      button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 999px;
+
+        background: #0b5cff;
+        color: white;
+
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      button.danger {
+        background: #e53935;
+      }
+
+      .category-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        padding: 12px;
+
+        border-bottom: 1px solid #eee;
+
+        font-size: 14px;
+      }
+      .category-actions {
+        display: flex;
+        gap: 6px;
+      }
+
+      .fab-add {
+        position: fixed;
+        right: 18px;
+        bottom: calc(var(--bottom-nav-height) + 10px);
+
+        width: 56px;
+        height: 56px;
+
+        border-radius: 50%;
+        background: #0b5cff;
+        color: white;
+        font-size: 28px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: none;
+        cursor: pointer;
+
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+
+      :root {
+        --bottom-nav-height: 65px;
+      }
+      /* SLIDE ADD CATEGORY */
+
+      .add-sheet {
+        position: fixed;
+        left: 0;
+        bottom: -100%;
+
+        width: 100%;
+        max-width: 700px;
+
+        background: white;
+
+        padding: 18px;
+
+        border-radius: 18px 18px 0 0;
+
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+
+        transition: bottom 0.35s ease;
+
+        z-index: 6000;
+      }
+
+      .add-sheet.open {
+        bottom: 0;
+      }
+
+      .sheet-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+      }
+
+      .sheet-header h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .sheet-close {
+        font-size: 24px;
+        cursor: pointer;
+        padding: 6px 10px;
+        border-radius: 8px;
+      }
+
+      .sheet-close:hover {
+        background: #f2f2f2;
+      }
+
+      @media (min-width: 768px) {
+        .container {
+          padding: 24px;
+        }
+
+        h2 {
+          font-size: 24px;
+        }
+
+        h3 {
+          font-size: 20px;
+        }
+
+        input {
+          font-size: 16px;
+          padding: 14px;
+        }
+
+        button {
+          font-size: 15px;
+          padding: 12px 16px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 12px;
+        }
+
+        .card {
+          padding: 14px;
+        }
+
+        .category-row {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+
+        .category-actions {
+          width: 100%;
+          display: flex;
+          gap: 6px;
+        }
+
+        .category-actions button {
+          flex: 1;
+          font-size: 13px;
+          padding: 8px;
+        }
+
+        .add-sheet {
+          padding: 16px;
+        }
+
+        input {
+          font-size: 14px;
+          padding: 10px;
+        }
+
+        button {
+          font-size: 13px;
+          padding: 8px 12px;
+        }
+      }
+
+      @media (min-width: 900px) {
+        .container {
+          max-width: 800px;
+        }
+
+        .category-row {
+          font-size: 16px;
+        }
+      }
+      @media (min-width: 768px) {
+        .container {
+          max-width: 700px;
+        }
+
+        .category-row {
+          font-size: 16px;
+        }
+
+        button {
+          font-size: 14px;
+          padding: 10px 14px;
+        }
+      }
+
+      .category-card {
+        display: flex;
+        align-items: center; /* ligne sur grands écrans */
+        padding: 14px 16px;
+        margin-bottom: 10px;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        background: #fff;
+        transition: transform 0.2s;
+      }
+
+      .category-card:hover {
+        transform: translateY(-2px);
+      }
+
+      .category-card .category-name {
+        flex: 1; /* prend tout l'espace restant */
+        margin-right: 16px; /* espace entre texte et icônes */
+        word-break: normal; /* ne pas casser les mots */
+        min-width: 0; /* évite débordement sur flex */
+        margin-top: -2px;
+      }
+
+      .category-actions {
+        display: flex;
+        gap: 12px;
+        flex-shrink: 0; /* icônes fixes à droite */
+        margin-top: -2px;
+      }
+
+      .category-actions span {
+        cursor: pointer;
+        font-size: 18px;
+        transition:
+          transform 0.2s,
+          color 0.2s;
+      }
+
+      .category-actions span:hover {
+        transform: scale(1.2);
+        color: #0b5cff;
+      }
+
+      .category-actions span.delete:hover {
+        color: #e53935;
+      }
+
+      /* ================== RESPONSIVE ================== */
+      @media (max-width: 600px) {
+        .category-card {
+          display: flex; /* texte au-dessus, icônes en dessous */
+          align-items: flex-start;
+        }
+
+        .category-card .category-name {
+          margin-right: 0;
+          margin-bottom: 8px; /* petit espace entre texte et icônes */
+        }
+
+        .category-actions {
+          width: 100%;
+          justify-content: flex-end; /* icônes à droite */
+        }
+      }
+
+      /* overley */
+
+      .settings-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.3s;
+        z-index: 999;
+      }
+
+      .settings-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: var(--bottom-nav-height);
+        background: white;
+        border-top: 1px solid #ddd;
+
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+
+        z-index: 5000;
+      }
+
+      .bottom-nav a {
+        text-decoration: none;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 12px;
+        background: transparent !important;
+      }
+
+      .bottom-nav div {
+        font-size: 22px;
+      }
+
+      /* ===== ACTIVE MENU ===== */
+      .bottom-nav a.active {
+        background: transparent !important;
+        color: var(--primary, #22c55e); /* compatible avec ton theme.js */
+        font-weight: 600;
+      }
+
+      .bottom-nav a.active div {
+        transform: scale(1.15);
+      }
+
+      .list-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 14px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <span>🗂 Catégories</span>
+    </header>
+
+    <div class="container">
+      <h2 class="list-title">Catégories enregistrées</h2>
+      <div id="categoryList"></div>
+    </div>
+
+    <!-- FAB pour ajouter -->
+    <button class="fab-add" onclick="openAddSheet()">+</button>
+
+    <div id="addOverlay" class="settings-overlay"></div>
+    <!-- Slide add/edit -->
+    <div id="addSheet" class="add-sheet">
+      <div class="sheet-header">
+        <h3 id="sheetTitle">➕ Ajouter catégorie</h3>
+        <span class="sheet-close" onclick="closeAddSheet()">✕</span>
+      </div>
+
+      <input id="newCatName" placeholder="Nom de la catégorie" />
+      <button id="sheetActionBtn" onclick="addOrUpdateCategory()">
+        Ajouter
+      </button>
+    </div>
+
+    <script>
+      // Empêcher accès sans connexion
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+
+      if (!user) {
+        window.location.href = "auth.html";
+      }
+
+      let categories = JSON.parse(
+        localStorage.getItem("categories") || '["Tous"]',
+      );
+      let editIndex = null; // suivi pour l'édition
+
+      function save() {
+        localStorage.setItem("categories", JSON.stringify(categories));
+      }
+
+      function render() {
+        const list = document.getElementById("categoryList");
+        const products = JSON.parse(localStorage.getItem("products") || "[]");
+
+        list.innerHTML = categories
+          .map((c, i) => {
+            if (c === "Tous") return "";
+
+            const count = products.filter((p) => p.category === c).length;
+
+            return `
+            <div class="category-card" draggable="true" data-index="${i}">
+              <span class="category-name">${c} <span style="font-size:12px;color:#777">(${count})</span></span>
+              <div class="category-actions">
+                <span title="Modifier" onclick="startEditCategory(${i})">✏️</span>
+                <span title="Supprimer" class="delete" onclick="deleteCategory(${i})">🗑️</span>
+              </div>
+            </div>
+            `;
+          })
+          .join("");
+
+        enableDrag();
+      }
+
+      const addOverlay = document.getElementById("addOverlay");
+      const addSheet = document.getElementById("addSheet");
+
+      function openAddSheet() {
+        editIndex = null;
+        document.getElementById("sheetTitle").textContent =
+          "➕ Ajouter catégorie";
+        document.getElementById("sheetActionBtn").textContent = "Ajouter";
+        document.getElementById("newCatName").value = "";
+        addOverlay.classList.add("active");
+        addSheet.classList.add("open");
+        document.body.classList.add("no-scroll");
+        setTimeout(() => document.getElementById("newCatName").focus(), 200);
+      }
+
+      function closeAddSheet() {
+        addOverlay.classList.remove("active");
+        addSheet.classList.remove("open");
+        document.body.classList.remove("no-scroll");
+      }
+
+      // fermer si clic sur overlay
+      addOverlay.onclick = closeAddSheet;
+      function addOrUpdateCategory() {
+        const input = document.getElementById("newCatName");
+        const value = input.value.trim();
+        if (!value) return;
+
+        if (editIndex !== null) {
+          if (categories.includes(value) && categories[editIndex] !== value) {
+            alert("Catégorie déjà existante");
+            return;
+          }
+
+          const oldName = categories[editIndex];
+          categories[editIndex] = value;
+
+          // Mettre à jour tous les produits liés
+          let products = JSON.parse(localStorage.getItem("products") || "[]");
+          products = products.map((p) => {
+            if (p.category === oldName) p.category = value;
+            return p;
+          });
+          localStorage.setItem("products", JSON.stringify(products));
+        } else {
+          if (categories.includes(value)) {
+            alert("Catégorie déjà existante");
+            return;
+          }
+          categories.push(value);
+        }
+
+        // Sauvegarde et re-render
+        save();
+        render();
+
+        // Fermer le slide **immédiatement** après ajout / mise à jour
+        closeAddSheet();
+        input.value = "";
+        editIndex = null; // réinitialiser
+      }
+
+      function startEditCategory(i) {
+        editIndex = i;
+        document.getElementById("sheetTitle").textContent =
+          "✏️ Modifier catégorie";
+        document.getElementById("sheetActionBtn").textContent = "Mettre à jour";
+        document.getElementById("newCatName").value = categories[i];
+
+        // Ouvrir le slide + overlay + bloquer scroll
+        addOverlay.classList.add("active");
+        addSheet.classList.add("open");
+        document.body.classList.add("no-scroll");
+
+        setTimeout(() => document.getElementById("newCatName").focus(), 200);
+      }
+
+      function deleteCategory(i) {
+        const name = categories[i];
+
+        if (
+          !confirm(
+            `⚠️ Supprimer la catégorie "${name}" supprimera également tous les produits qui lui appartiennent. Confirmer ?`,
+          )
+        ) {
+          return; // annuler si l'utilisateur clique sur "Annuler"
+        }
+
+        // Supprimer la catégorie
+        categories.splice(i, 1);
+
+        // Supprimer les produits associés à cette catégorie
+        let products = JSON.parse(localStorage.getItem("products") || "[]");
+        products = products.filter((p) => p.category !== name);
+        localStorage.setItem("products", JSON.stringify(products));
+
+        // Sauvegarder les catégories et mettre à jour l'affichage
+        save();
+        render();
+      }
+      render();
+    </script>
+
+    <!--- BAR DE NAVIGATION BAS---->
+    <nav class="bottom-nav">
+      <a href="dashboard.html" data-page="dashboard">
+        <div>📊</div>
+        <span>Dashboard</span>
+      </a>
+
+      <a href="admin-categories.html" data-page="categories">
+        <div>🗂</div>
+        <span>Catégories</span>
+      </a>
+
+      <a href="admin.html" data-page="products">
+        <div>📦</div>
+        <span>Produits</span>
+      </a>
+
+      <a href="admin-slider.html" data-page="slider">
+        <div>📢</div>
+        <span>Messages</span>
+      </a>
+
+      <a href="index.html" data-page="site">
+        <div>🏠</div>
+        <span>Site</span>
+      </a>
+    </nav>
+
+    <script>
+      const links = document.querySelectorAll(".bottom-nav a");
+      const currentPage = window.location.pathname.split("/").pop();
+
+      links.forEach((link) => {
+        const href = link.getAttribute("href");
+
+        if (href === currentPage) {
+          link.classList.add("active");
+        }
+      });
+    </script>
+  </body>
+</html>

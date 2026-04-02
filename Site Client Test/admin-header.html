@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1e293b" />
+
+    <title>Admin – Header</title>
+
+    <style>
+      @font-face {
+        font-family: "birds-of-paradise";
+        src: url("fonts/birds-of-paradise.ttf");
+      }
+      @font-face {
+        font-family: "faith";
+        src: url("fonts/faith.ttf");
+      }
+      @font-face {
+        font-family: "floraison-des-amours";
+        src: url("fonts/floraison-des-amours.ttf");
+      }
+      @font-face {
+        font-family: "sparkling-valentine";
+        src: url("fonts/sparkling-valentine.ttf");
+      }
+      @font-face {
+        font-family: "valentine-delight";
+        src: url("fonts/valentine-delight.ttf");
+      }
+      @font-face {
+        font-family: "valen-valentine";
+        src: url("fonts/valen-valentine.ttf");
+      }
+      @font-face {
+        font-family: "when-the-stars-align";
+        src: url("fonts/when-the-stars-align.ttf");
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: system-ui;
+        background: #f4f6fb;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        padding: 16px;
+      }
+      h2 {
+        margin-bottom: 12px;
+      }
+
+      #headerPreviewWrapper {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: #f4f6fb;
+        padding: 12px 0;
+        display: flex;
+        justify-content: center;
+      }
+      #headerPreview {
+        width: 96%;
+        max-width: 580px;
+        height: 180px;
+        border-radius: 18px;
+        overflow: hidden;
+        background: var(--headerBg);
+        position: relative;
+      }
+      .header-logo {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+      }
+      .header-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-size: 38px;
+        font-weight: 700;
+        color: #fff;
+        white-space: nowrap;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .card {
+        background: #fff;
+        padding: 16px;
+        border-radius: 14px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        margin: 12px 0 16px;
+      }
+      label {
+        display: block;
+        margin-top: 12px;
+        font-weight: 600;
+      }
+      input[type="text"],
+      input[type="file"],
+      select,
+      input[type="color"] {
+        width: 100%;
+        padding: 10px;
+        margin-top: 6px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+      }
+      input[type="color"] {
+        padding: 0;
+        height: 32px;
+        width: 32px;
+      }
+      button {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 10px;
+        background: #0b5cff;
+        color: #fff;
+        cursor: pointer;
+        margin-top: 12px;
+      }
+      .arrow-control {
+        display: inline-block;
+        margin: 4px;
+        padding: 6px 10px;
+        background: #ddd;
+        cursor: pointer;
+        border-radius: 6px;
+        user-select: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>🖌 Paramétrer le Header</h2>
+
+      <div id="headerPreviewWrapper">
+        <div id="headerPreview">
+          <div class="header-logo" id="headerLogoBox"></div>
+          <div class="header-text" id="headerTextBox">Texte Header</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <label>Mode de fond</label>
+        <select id="bgMode">
+          <option value="theme">Thème</option>
+          <option value="image">Image</option>
+        </select>
+
+        <div id="bgImageContainer">
+          <label>Image de fond</label>
+          <input type="file" id="headerBg" accept="image/*" />
+        </div>
+
+        <label>Mode d'affichage</label>
+        <select id="displayMode">
+          <option value="text-only">Texte seul</option>
+          <option value="logo-only">Logo seul</option>
+          <option value="logo-text">Logo + Texte</option>
+          <option value="bg-only">Fond seul</option>
+        </select>
+
+        <div id="textSettings">
+          <label>Texte</label>
+          <input type="text" id="headerText" />
+
+          <label>Police</label>
+          <select id="headerFont">
+            <option value="sans-serif">Sans Serif</option>
+            <option value="birds-of-paradise">Birds of Paradise</option>
+            <option value="faith">Faith</option>
+            <option value="floraison-des-amours">Floraison des Amours</option>
+            <option value="sparkling-valentine">Sparkling Valentine</option>
+            <option value="valentine-delight">Valentine Delight</option>
+            <option value="valen-valentine">Valen Valentine</option>
+            <option value="when-the-stars-align">When The Stars Align</option>
+          </select>
+
+          <label>Déplacer Texte</label>
+          <div>
+            <span
+              class="arrow-control"
+              data-type="text"
+              data-dx="-5"
+              data-dy="0"
+              >←</span
+            >
+            <span class="arrow-control" data-type="text" data-dx="5" data-dy="0"
+              >→</span
+            >
+            <span
+              class="arrow-control"
+              data-type="text"
+              data-dx="0"
+              data-dy="-5"
+              >↑</span
+            >
+            <span class="arrow-control" data-type="text" data-dx="0" data-dy="5"
+              >↓</span
+            >
+          </div>
+
+          <label id="headerTextColorLabel">Couleur texte header</label>
+          <input type="color" id="headerTextColor" />
+        </div>
+
+        <div id="logoSettings">
+          <label>Logo</label>
+          <input type="file" id="headerLogo" accept="image/*" />
+
+          <label>Déplacer Logo</label>
+          <div>
+            <span
+              class="arrow-control"
+              data-type="logo"
+              data-dx="-5"
+              data-dy="0"
+              >←</span
+            >
+            <span class="arrow-control" data-type="logo" data-dx="5" data-dy="0"
+              >→</span
+            >
+            <span
+              class="arrow-control"
+              data-type="logo"
+              data-dx="0"
+              data-dy="-5"
+              >↑</span
+            >
+            <span class="arrow-control" data-type="logo" data-dx="0" data-dy="5"
+              >↓</span
+            >
+          </div>
+        </div>
+
+        <button id="saveBtn">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <script src="theme.js"></script>
+    <script>
+      // Empêcher accès sans connexion
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+
+      if (!user) {
+        window.location.href = "auth.html";
+      }
+      const settings = JSON.parse(localStorage.getItem("siteSettings") || "{}");
+
+      const headerTextBox = document.getElementById("headerTextBox");
+      const headerLogoBox = document.getElementById("headerLogoBox");
+      const headerPreview = document.getElementById("headerPreview");
+
+      const headerTextInput = document.getElementById("headerText");
+      const headerFontSelect = document.getElementById("headerFont");
+      const headerLogoInput = document.getElementById("headerLogo");
+      const headerBgInput = document.getElementById("headerBg");
+      const bgModeSelect = document.getElementById("bgMode");
+      const displayModeSelect = document.getElementById("displayMode");
+      const bgImageContainer = document.getElementById("bgImageContainer");
+      const textSettings = document.getElementById("textSettings");
+      const logoSettings = document.getElementById("logoSettings");
+
+      const headerTextColorInput = document.getElementById("headerTextColor");
+      const headerTextColorLabel = document.getElementById(
+        "headerTextColorLabel",
+      );
+
+      let logoPos = settings.logoPos || { x: 0, y: 0 };
+      let textPos = settings.textPos || { x: 0, y: 0 };
+
+      // --- LOAD ---
+      headerTextInput.value = settings.headerText || "";
+      headerTextBox.textContent = settings.headerText || "Texte Header";
+      headerFontSelect.value = settings.headerFont || "sans-serif";
+      headerTextBox.style.fontFamily = headerFontSelect.value;
+
+      if (settings.headerLogo)
+        headerLogoBox.style.backgroundImage = `url(${settings.headerLogo})`;
+      if (settings.headerBg) {
+        headerPreview.style.backgroundImage = `url(${settings.headerBg})`;
+        headerPreview.style.backgroundSize = "cover";
+        headerPreview.style.backgroundPosition = "center";
+      }
+      if (settings.headerTextColor) {
+        headerTextColorInput.value = settings.headerTextColor;
+        headerTextBox.style.color = settings.headerTextColor;
+      }
+
+      function applyTransforms() {
+        headerLogoBox.style.transform = `translate(-50%, -50%) translate(${logoPos.x}px,${logoPos.y}px)`;
+        headerTextBox.style.transform = `translate(-50%, -50%) translate(${textPos.x}px,${textPos.y}px)`;
+      }
+      applyTransforms();
+
+      // --- UPDATE DISPLAY ---
+      function updateDisplay() {
+        const mode = displayModeSelect.value;
+
+        // texte/logo affichage
+        headerTextBox.style.display =
+          mode === "text-only" || mode === "logo-text" ? "block" : "none";
+        headerLogoBox.style.display =
+          mode === "logo-only" || mode === "logo-text" ? "block" : "none";
+        textSettings.style.display =
+          mode === "text-only" || mode === "logo-text" ? "block" : "none";
+        logoSettings.style.display =
+          mode === "logo-only" || mode === "logo-text" ? "block" : "none";
+
+        if (bgModeSelect.value === "image") {
+          bgImageContainer.style.display = "block";
+          if (mode === "text-only" || mode === "logo-text") {
+            headerTextColorLabel.style.display = "block";
+            headerTextColorInput.style.display = "block";
+          } else {
+            headerTextColorLabel.style.display = "none";
+            headerTextColorInput.style.display = "none";
+          }
+        } else {
+          // --- MODE THEME ---
+          bgImageContainer.style.display = "none";
+          headerTextColorLabel.style.display = "none";
+          headerTextColorInput.style.display = "none";
+
+          // Supprime image et couleur stockées
+          delete settings.headerBg;
+          delete settings.headerTextColor;
+          localStorage.setItem("siteSettings", JSON.stringify(settings));
+
+          headerPreview.style.backgroundImage = "";
+          headerTextBox.style.color = "#fff"; // couleur par défaut thème
+        }
+      }
+
+      displayModeSelect.value = settings.displayMode || "logo-text";
+      bgModeSelect.value = settings.bgMode || "theme";
+      updateDisplay();
+
+      bgModeSelect.onchange = updateDisplay;
+      displayModeSelect.onchange = updateDisplay;
+
+      headerTextInput.oninput = () =>
+        (headerTextBox.textContent = headerTextInput.value);
+      headerFontSelect.onchange = () =>
+        (headerTextBox.style.fontFamily = headerFontSelect.value);
+      headerTextColorInput.oninput = () =>
+        (headerTextBox.style.color = headerTextColorInput.value);
+
+      headerLogoInput.onchange = (e) => {
+        const f = e.target.files[0];
+        if (!f) return;
+        const r = new FileReader();
+        r.onload = () => {
+          settings.headerLogo = r.result;
+          headerLogoBox.style.backgroundImage = `url(${r.result})`;
+        };
+        r.readAsDataURL(f);
+      };
+
+      headerBgInput.onchange = (e) => {
+        const f = e.target.files[0];
+        if (!f) return;
+        const r = new FileReader();
+        r.onload = () => {
+          settings.headerBg = r.result;
+          headerPreview.style.backgroundImage = `url(${r.result})`;
+          headerPreview.style.backgroundSize = "cover";
+          headerPreview.style.backgroundPosition = "center";
+          updateDisplay();
+        };
+        r.readAsDataURL(f);
+      };
+
+      document.querySelectorAll(".arrow-control").forEach((btn) => {
+        btn.onclick = () => {
+          const dx = parseInt(btn.dataset.dx),
+            dy = parseInt(btn.dataset.dy);
+          if (btn.dataset.type === "logo") {
+            logoPos.x += dx;
+            logoPos.y += dy;
+          } else {
+            textPos.x += dx;
+            textPos.y += dy;
+          }
+          applyTransforms();
+        };
+      });
+
+      document.getElementById("saveBtn").onclick = () => {
+        settings.headerText = headerTextInput.value;
+        settings.headerFont = headerFontSelect.value;
+        settings.logoPos = logoPos;
+        settings.textPos = textPos;
+        settings.bgMode = bgModeSelect.value;
+        settings.displayMode = displayModeSelect.value;
+        if (bgModeSelect.value === "image")
+          settings.headerTextColor = headerTextColorInput.value;
+        localStorage.setItem("siteSettings", JSON.stringify(settings));
+        alert("✅ Header enregistré !");
+      };
+    </script>
+  </body>
+</html>

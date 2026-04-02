@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1e293b" />
+
+    <title>Admin – Slider</title>
+
+    <style>
+      @font-face {
+        font-family: "birds-of-paradise";
+        src: url("fonts/birds-of-paradise.ttf");
+      }
+
+      @font-face {
+        font-family: "faith";
+        src: url("fonts/faith.ttf");
+      }
+
+      @font-face {
+        font-family: "floraison-des-amours";
+        src: url("fonts/floraison-des-amours.ttf");
+      }
+
+      @font-face {
+        font-family: "sparkling-valentine";
+        src: url("fonts/sparkling-valentine.ttf");
+      }
+
+      @font-face {
+        font-family: "valentine-delight";
+        src: url("fonts/valentine-delight.ttf");
+      }
+
+      @font-face {
+        font-family: "valen-valentine";
+        src: url("fonts/valen-valentine.ttf");
+      }
+
+      @font-face {
+        font-family: "when-the-stars-align";
+        src: url("fonts/when-the-stars-align.ttf");
+      }
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui;
+        background: #f4f6fb;
+        padding-bottom: var(--bottom-nav-height);
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: #0b5cff;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        font-weight: 600;
+      }
+
+      .list-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 14px;
+      }
+
+      .empty-list {
+        text-align: center;
+        margin-top: 60px;
+        font-size: 16px;
+        color: #888;
+      }
+      header button {
+        border: none;
+        background: #fff;
+        color: #0b5cff;
+        border-radius: 8px;
+        padding: 6px 12px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .container {
+        padding: 14px;
+      }
+
+      h2 {
+        margin-top: 0;
+      }
+
+      label {
+        display: block;
+        margin-top: 12px;
+        font-weight: 600;
+        font-size: 15px;
+      }
+
+      input[type="text"],
+      select {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        margin-top: 6px;
+        font-size: 15px;
+      }
+
+      /* Petit carré couleur réduit */
+      .color-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 6px;
+      }
+      input[type="color"] {
+        appearance: none;
+        -webkit-appearance: none;
+
+        width: 36px;
+        height: 36px;
+
+        border: none;
+        padding: 0;
+
+        cursor: pointer;
+        background: transparent;
+      }
+
+      input[type="color"]::-webkit-color-swatch {
+        border-radius: 6px;
+        border: 1px solid #ddd;
+      }
+
+      input[type="color"]::-moz-color-swatch {
+        border-radius: 6px;
+        border: 1px solid #ddd;
+      }
+
+      button.save-btn {
+        margin-top: 20px;
+        padding: 14px;
+        width: 100%;
+        border: none;
+        border-radius: 10px;
+        background: #0b5cff;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      .settings-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.3s;
+        z-index: 999;
+      }
+
+      .settings-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* ================= ADD SHEET ================= */
+
+      .add-sheet {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: -100%;
+        height: 88vh;
+
+        background: #fff;
+        border-radius: 20px 20px 0 0;
+
+        padding: 20px;
+
+        transition: bottom 0.4s ease;
+        z-index: 6000;
+
+        display: flex;
+        flex-direction: column;
+
+        overflow: hidden; /* important */
+      }
+
+      .add-sheet.active {
+        bottom: 0;
+      }
+      .sheet-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+      }
+
+      /* HEADER */
+      .sheet-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .sheet-tabs {
+        display: flex;
+        gap: 40px;
+        position: relative;
+        font-weight: 600;
+        font-size: 17px;
+      }
+
+      .sheet-tabs span {
+        cursor: pointer;
+        padding-bottom: 6px;
+        opacity: 0.6;
+        transition: 0.3s;
+      }
+
+      .sheet-tabs span.active {
+        opacity: 1;
+      }
+
+      .sheet-indicator {
+        position: absolute;
+        bottom: -2px;
+        height: 3px;
+        width: 80px;
+        background: #0b5cff;
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+      }
+
+      .sheet-close {
+        font-size: 22px;
+        cursor: pointer;
+      }
+
+      body.no-scroll {
+        overflow: hidden;
+      }
+
+      :root {
+        --bottom-nav-height: 65px;
+      }
+
+      .fab-add {
+        position: fixed;
+        right: 18px;
+        bottom: calc(var(--bottom-nav-height) + 10px);
+
+        width: 56px;
+        height: 56px;
+
+        border-radius: 50%;
+        background: #0b5cff;
+        color: white;
+
+        font-size: 28px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: none;
+        cursor: pointer;
+
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+
+        z-index: 5500;
+      }
+
+      .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: var(--bottom-nav-height);
+        background: white;
+        border-top: 1px solid #ddd;
+
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+
+        z-index: 5000;
+      }
+
+      .bottom-nav a {
+        text-decoration: none;
+        color: #333;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        font-size: 12px;
+      }
+
+      .bottom-nav div {
+        font-size: 22px;
+      }
+
+      /* ===== ACTIVE MENU ===== */
+      .bottom-nav a.active {
+        color: var(--primary, #22c55e); /* compatible avec ton theme.js */
+        font-weight: 600;
+      }
+
+      .bottom-nav a.active div {
+        transform: scale(1.15);
+      }
+
+      /* cartes messages */
+
+      .category-card {
+        display: flex;
+        align-items: center;
+
+        padding: 16px;
+        margin-bottom: 10px;
+
+        border-radius: 14px;
+
+        background: white;
+
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+      }
+
+      .category-name {
+        flex: 1;
+
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .category-actions {
+        display: flex;
+        gap: 16px;
+      }
+
+      .category-actions span {
+        cursor: pointer;
+        font-size: 20px;
+      }
+
+      .category-name {
+        flex: 1;
+      }
+
+      .category-actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      .category-actions span {
+        cursor: pointer;
+        font-size: 18px;
+      }
+
+      .active-toggle {
+        width: 18px;
+        height: 18px;
+        border: 2px solid #999;
+        border-radius: 4px;
+        cursor: pointer;
+
+        margin-top: 4px;
+      }
+
+      .active-toggle.active-box {
+        background: #0b5cff;
+        border-color: #0b5cff;
+        position: relative;
+      }
+
+      .active-toggle.active-box::after {
+        content: "✓";
+        color: white;
+        font-size: 14px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .active-badge {
+        margin-left: 8px;
+        background: #0b5cff;
+        color: white;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 6px;
+        font-weight: 600;
+      }
+
+      /* POPUP */
+
+      .popup-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.25s;
+
+        z-index: 7000;
+      }
+
+      .popup-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .popup-box {
+        background: white;
+        width: 90%;
+        max-width: 420px;
+
+        border-radius: 16px;
+
+        padding: 20px;
+
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      }
+
+      .popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        font-weight: 700;
+        margin-bottom: 15px;
+      }
+
+      .popup-close {
+        cursor: pointer;
+        font-size: 20px;
+      }
+
+      .popup-message {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 15px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <span>📢 Messages promo</span>
+    </header>
+
+    <div class="container">
+      <h2 class="list-title">Messages enregistrés</h2>
+
+      <div id="sliderList"></div>
+    </div>
+
+    <div id="sliderOverlay" class="settings-overlay"></div>
+    <button class="fab-add" onclick="openSliderSheet()">+</button>
+    <div id="sliderSheet" class="add-sheet">
+      <div class="sheet-header">
+        <h3 id="sliderTitle">➕ Nouveau message</h3>
+        <span class="sheet-close" onclick="closeSliderSheet()">✕</span>
+      </div>
+
+      <div class="sheet-content">
+        <label>Nom message</label>
+        <input type="text" id="messageName" />
+
+        <hr />
+
+        <label>Texte 1</label>
+        <input type="text" id="text1" />
+
+        <label>Texte 2</label>
+        <input type="text" id="text2" />
+
+        <label>Texte 3</label>
+        <input type="text" id="text3" />
+
+        <label>Couleur du texte</label>
+        <input type="color" id="textColor" />
+
+        <label>Police du texte</label>
+        <select id="textFont"></select>
+
+        <label>Vitesse du slider</label>
+        <select id="sliderSpeed">
+          <option value="2000">Rapide</option>
+          <option value="3000" selected>Normal</option>
+          <option value="5000">Lent</option>
+        </select>
+
+        <button class="save-btn" onclick="saveSliderSet()">Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- POPUP MESSAGES -->
+    <div id="messagePopup" class="popup-overlay">
+      <div class="popup-box">
+        <div class="popup-header">
+          <span id="popupTitle">Messages</span>
+          <span class="popup-close" onclick="closePopup()">✕</span>
+        </div>
+
+        <div id="popupMessages"></div>
+      </div>
+    </div>
+
+    <script>
+      // Empêcher accès sans connexion
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+
+      if (!user) {
+        window.location.href = "auth.html";
+      }
+      const settings = JSON.parse(localStorage.getItem("siteSettings") || "{}");
+
+      /* ===== POLICES DISPONIBLES SIMPLIFIEES ===== */
+      const fontList = [
+        "serif",
+        "sans-serif",
+        "sans-serif semi-bold",
+        "sans-serif bold",
+
+        "birds-of-paradise",
+        "faith",
+        "floraison-des-amours",
+        "sparkling-valentine",
+        "valentine-delight",
+        "valen-valentine",
+        "when-the-stars-align",
+      ];
+
+      // Remplir les selects
+      ["textFont"].forEach((id) => {
+        const select = document.getElementById(id);
+
+        if (!select) return;
+
+        fontList.forEach((font) => {
+          const option = document.createElement("option");
+          option.value = font;
+          option.textContent = font;
+          select.appendChild(option);
+        });
+      });
+
+      let sliderSets = JSON.parse(localStorage.getItem("sliderSets") || "[]");
+      let editIndex = null;
+
+      function renderSliders() {
+        const list = document.getElementById("sliderList");
+
+        if (sliderSets.length === 0) {
+          list.innerHTML = `<div class="empty-list">Liste vide</div>`;
+          return;
+        }
+
+        list.innerHTML = sliderSets
+          .map((s, i) => {
+            const activeClass = s.active ? "active-box" : "";
+
+            return `
+      <div class="category-card">
+
+       <span class="category-name">
+${s.name}
+${s.active ? '<span class="active-badge">EN COURS</span>' : ""}
+</span>
+
+        <div class="category-actions">
+
+          <span onclick="viewMessages(${i})">👁</span>
+
+          <span onclick="editSlider(${i})">✏️</span>
+
+          <span onclick="deleteSlider(${i})">🗑️</span>
+
+         <span class="active-toggle ${activeClass}" onclick="toggleSlider(${i})"></span>
+
+        </div>
+
+      </div>
+
+      <div style="font-size:12px;color:#777;margin-bottom:12px">
+      ${s.date} • ${s.time || ""}
+      </div>
+      `;
+          })
+          .join("");
+      }
+      renderSliders();
+
+      const sliderOverlay = document.getElementById("sliderOverlay");
+      const sliderSheet = document.getElementById("sliderSheet");
+
+      function closeSliderSheet() {
+        sliderOverlay.classList.remove("active");
+        sliderSheet.classList.remove("active");
+        document.body.classList.remove("no-scroll");
+      }
+
+      function openSliderSheet() {
+        if (editIndex === null) {
+          resetForm();
+          document.querySelector(".save-btn").textContent = "Enregistrer";
+          document.getElementById("sliderTitle").textContent =
+            "➕ Nouveau message";
+        }
+
+        sliderOverlay.classList.add("active");
+        sliderSheet.classList.add("active");
+        document.body.classList.add("no-scroll");
+
+        sliderSheet.scrollTop = 0;
+      }
+
+      sliderOverlay.onclick = closeSliderSheet;
+      function saveSliderSet() {
+        const name = document.getElementById("messageName").value.trim();
+
+        if (!name) return alert("Nom message requis");
+
+        const sliderData = [
+          { text: text1.value.trim() },
+          { text: text2.value.trim() },
+          { text: text3.value.trim() },
+        ].filter((s) => s.text !== "");
+
+        if (editIndex !== null) {
+          sliderSets[editIndex].name = name;
+          sliderSets[editIndex].messages = sliderData;
+          sliderSets[editIndex].color = textColor.value;
+          sliderSets[editIndex].font = textFont.value;
+
+          editIndex = null;
+
+          document.querySelector(".save-btn").textContent = "Enregistrer";
+          document.getElementById("sliderTitle").textContent =
+            "➕ Nouveau message";
+        } else {
+          sliderSets.forEach((s) => (s.active = false));
+          const now = new Date();
+
+          sliderSets.push({
+            name: name,
+            messages: sliderData,
+            color: textColor.value,
+            font: textFont.value,
+            speed: sliderSpeed.value,
+            date: now.toLocaleDateString(),
+            time: now.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            active: true,
+          });
+        }
+
+        sortSliders();
+
+        localStorage.setItem("sliderSets", JSON.stringify(sliderSets));
+
+        renderSliders();
+
+        resetForm();
+
+        closeSliderSheet();
+      }
+
+      function deleteSlider(i) {
+        if (!confirm("Supprimer ce lot de messages ?")) return;
+
+        sliderSets.splice(i, 1);
+
+        localStorage.setItem("sliderSets", JSON.stringify(sliderSets));
+
+        renderSliders();
+      }
+
+      function toggleSlider(i) {
+        sliderSets.forEach((s, index) => {
+          if (index === i) {
+            s.active = !s.active;
+          } else {
+            s.active = false;
+          }
+        });
+
+        sortSliders();
+
+        localStorage.setItem("sliderSets", JSON.stringify(sliderSets));
+
+        renderSliders();
+      }
+
+      function toggleActive(i) {
+        sliderSets.forEach((s, index) => {
+          if (index === i) {
+            s.active = !s.active;
+          } else {
+            s.active = false;
+          }
+        });
+
+        saveData();
+        renderSliderList();
+      }
+
+      function sortSliders() {
+        sliderSets.sort((a, b) => {
+          if (a.active && !b.active) return -1;
+          if (!a.active && b.active) return 1;
+
+          return 0;
+        });
+      }
+
+      function editSlider(i) {
+        const s = sliderSets[i];
+
+        editIndex = i;
+
+        document.getElementById("messageName").value = s.name;
+
+        document.getElementById("text1").value = s.messages[0]?.text || "";
+        document.getElementById("text2").value = s.messages[1]?.text || "";
+        document.getElementById("text3").value = s.messages[2]?.text || "";
+
+        document.getElementById("textColor").value = s.color;
+        document.getElementById("textFont").value = s.font;
+
+        document.querySelector(".save-btn").textContent = "Mettre à jour";
+        document.getElementById("sliderTitle").textContent =
+          "✏️ Modifier message";
+
+        openSliderSheet();
+      }
+
+      function resetForm() {
+        document.getElementById("messageName").value = "";
+
+        text1.value = "";
+        text2.value = "";
+        text3.value = "";
+
+        textColor.value = "#000000";
+
+        textFont.selectedIndex = 0;
+      }
+
+      const popup = document.getElementById("messagePopup");
+      const popupMessages = document.getElementById("popupMessages");
+      const popupTitle = document.getElementById("popupTitle");
+
+      function viewMessages(i) {
+        const s = sliderSets[i];
+
+        popupTitle.textContent = s.name;
+
+        popupMessages.innerHTML = s.messages
+          .map((m) => `<div class="popup-message">${m.text}</div>`)
+          .join("");
+
+        popup.classList.add("active");
+      }
+
+      function closePopup() {
+        popup.classList.remove("active");
+      }
+
+      popup.onclick = (e) => {
+        if (e.target.id === "messagePopup") {
+          closePopup();
+        }
+      };
+    </script>
+
+    <!--- BAR DE NAVIGATION BAS---->
+    <nav class="bottom-nav">
+      <a href="dashboard.html" data-page="dashboard">
+        <div>📊</div>
+        <span>Dashboard</span>
+      </a>
+
+      <a href="admin-categories.html" data-page="categories">
+        <div>🗂</div>
+        <span>Catégories</span>
+      </a>
+
+      <a href="admin.html" data-page="products">
+        <div>📦</div>
+        <span>Produits</span>
+      </a>
+
+      <a href="admin-slider.html" data-page="slider">
+        <div>📢</div>
+        <span>Messages</span>
+      </a>
+
+      <a href="index.html" data-page="site">
+        <div>🏠</div>
+        <span>Site</span>
+      </a>
+    </nav>
+
+    <script>
+      const links = document.querySelectorAll(".bottom-nav a");
+      const currentPage = window.location.pathname.split("/").pop();
+
+      links.forEach((link) => {
+        const href = link.getAttribute("href");
+
+        if (href === currentPage) {
+          link.classList.add("active");
+        }
+      });
+    </script>
+  </body>
+</html>

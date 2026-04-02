@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1e293b" />
+
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui;
+        background: #0f172a;
+        color: white;
+      }
+      header {
+        padding: 14px;
+        background: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .back {
+        cursor: pointer;
+      }
+
+      .container {
+        padding: 16px;
+      }
+
+      .card {
+        padding: 16px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .input {
+        margin-bottom: 12px;
+      }
+      .input input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: none;
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 14px;
+        border-radius: 10px;
+        border: none;
+        background: #22c55e;
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="back" onclick="back()">⬅️</div>
+      <b>Sécurité</b>
+    </header>
+
+    <div class="container">
+      <div class="card">
+        <div class="input">
+          <input id="old" placeholder="Ancien mot de passe" />
+        </div>
+
+        <div class="input">
+          <input id="new" placeholder="Nouveau mot de passe" />
+        </div>
+
+        <button class="btn" onclick="save()">🔒 Modifier</button>
+      </div>
+    </div>
+
+    <script>
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+
+      const oldInput = document.getElementById("old");
+      const newInput = document.getElementById("new");
+
+      function save() {
+        if (!user) {
+          alert("Utilisateur introuvable");
+          return;
+        }
+
+        if (oldInput.value !== user.password) {
+          alert("❌ Mauvais mot de passe");
+          return;
+        }
+
+        if (newInput.value.length < 4) {
+          alert("⚠️ Mot de passe trop court");
+          return;
+        }
+
+        user.password = newInput.value;
+
+        localStorage.setItem("currentUser", JSON.stringify(user));
+
+        alert("✅ Mot de passe modifié");
+      }
+
+      function back() {
+        location.href = "dashboard.html";
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1e293b" />
+
+    <title>Abonnement</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui;
+        background: #0f172a;
+        color: white;
+        text-align: center;
+      }
+
+      header {
+        padding: 16px;
+        background: #1e293b;
+        font-weight: bold;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      .plan {
+        background: #1e293b;
+        padding: 20px;
+        border-radius: 16px;
+        margin-bottom: 20px;
+      }
+
+      .price {
+        font-size: 28px;
+        margin: 10px 0;
+        color: #22c55e;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 10px;
+        margin-top: 10px;
+        font-weight: bold;
+        cursor: pointer;
+        background: #22c55e;
+        color: white;
+      }
+
+      .note {
+        font-size: 14px;
+        opacity: 0.7;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>🚀 Mettre mon catalogue en ligne</header>
+
+    <div class="container">
+      <div class="plan">
+        <h3>Abonnement Mensuel</h3>
+        <div class="price">5000 FCFA / mois</div>
+        <p>
+          ✔ Catalogue en ligne <br />✔ Notifications automatiques <br />✔ Accès
+          complet
+        </p>
+        <button class="btn" onclick="pay('monthly')">Payer maintenant</button>
+      </div>
+
+      <div class="plan">
+        <h3>Abonnement Annuel</h3>
+        <div class="price">47 500 FCFA / an</div>
+        <p>
+          🔥 Économisez 12 500 FCFA <br />✔ Tout inclus <br />✔ Notifications
+          automatiques
+        </p>
+        <button class="btn" onclick="pay('yearly')">Payer maintenant</button>
+      </div>
+
+      <div class="note">Paiement via Mobile Money (MTN / Moov / Celtiis)</div>
+    </div>
+
+    <script>
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+
+      if (!user) {
+        window.location.href = "auth.html";
+      }
+
+      function pay(type) {
+        // ⚠️ Simulation paiement pour test
+        user.isPaid = true;
+        user.plan = type;
+        user.paidAt = new Date().toISOString();
+
+        localStorage.setItem("currentUser", JSON.stringify(user));
+
+        alert("Paiement réussi ✅");
+
+        window.location.href = "dashboard.html";
+      }
+
+      // ⚠️ expiration abonnement
+      const now = new Date();
+      const expire = new Date();
+
+      if (type === "monthly") {
+        expire.setMonth(now.getMonth() + 1);
+      } else {
+        expire.setFullYear(now.getFullYear() + 1);
+      }
+
+      user.expireAt = expire.toISOString();
+    </script>
+  </body>
+</html>

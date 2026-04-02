@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1e293b" />
+
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui;
+        background: #0f172a;
+        color: white;
+      }
+      header {
+        padding: 14px;
+        background: #1e293b;
+        display: flex;
+        gap: 10px;
+      }
+
+      .container {
+        padding: 16px;
+      }
+
+      .card {
+        padding: 16px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .select {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+        border: none;
+      }
+
+      .btn {
+        margin-top: 10px;
+        width: 100%;
+        padding: 14px;
+        border-radius: 10px;
+        border: none;
+        background: #22c55e;
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div onclick="back()">⬅️</div>
+      <b>Préférences</b>
+    </header>
+
+    <div class="container">
+      <div class="card">
+        <select id="lang" class="select">
+          <option value="fr">Français</option>
+          <option value="en">English</option>
+        </select>
+
+        <button class="btn" onclick="save()">💾 Sauvegarder</button>
+      </div>
+    </div>
+
+    <script>
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+
+      document.getElementById("lang").value = user.lang || "fr";
+
+      function save() {
+        user.lang = lang.value;
+        localStorage.setItem("currentUser", JSON.stringify(user));
+        alert("✅ Sauvegardé");
+      }
+
+      function back() {
+        location.href = "dashboard.html";
+      }
+    </script>
+  </body>
+</html>

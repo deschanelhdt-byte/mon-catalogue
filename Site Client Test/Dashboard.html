@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1e293b" />
+
+    <title>Dashboard</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui;
+        background: #0f172a;
+        color: white;
+      }
+
+      header {
+        padding: 14px;
+        background: #1e293b;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .logout {
+        background: #ef4444;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+      }
+
+      .container {
+        padding: 16px;
+      }
+
+      .card {
+        background: #1e293b;
+        padding: 16px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 10px;
+        margin-top: 10px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .primary {
+        background: #22c55e;
+        color: white;
+      }
+
+      .secondary {
+        background: #3b82f6;
+        color: white;
+      }
+
+      .status {
+        margin-top: 10px;
+        font-size: 14px;
+        opacity: 0.8;
+      }
+
+      .active {
+        background: #22c55e;
+      }
+
+      .inactive {
+        background: #ef4444;
+      }
+
+      /*--- BAR DE NAVIGATION BASSE---*/
+
+      .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: var(--bottom-nav-height);
+        background: white;
+        border-top: 1px solid #ddd;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 5000;
+      }
+
+      .bottom-nav a {
+        text-decoration: none;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 12px;
+        background: transparent !important;
+      }
+
+      .bottom-nav div {
+        font-size: 22px;
+      }
+
+      /* ===== ACTIVE MENU ===== */
+      .bottom-nav a.active {
+        background: transparent !important;
+        color: var(--primary, #22c55e); /* compatible avec ton theme.js */
+        font-weight: 600;
+      }
+
+      .bottom-nav a.active div {
+        transform: scale(1.15);
+      }
+
+      :root {
+        --bottom-nav-height: 65px;
+      }
+      body {
+        padding-bottom: var(--bottom-nav-height);
+      }
+
+      .status-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .status {
+        margin-top: -8px;
+        font-size: 11px;
+        opacity: 0.5;
+        line-height: 1.4; /* meilleure lisibilité */
+      }
+
+      /* statut inline */
+      #badge {
+        font-size: 14px;
+        font-weight: 600;
+        margin-left: 6px;
+        background: transparent !important;
+      }
+
+      /* couleurs sans fond */
+      #badge.active {
+        color: #22c55e;
+      }
+
+      #badge.inactive {
+        color: #ef4444;
+      }
+      .small-btn {
+        width: auto;
+        padding: 8px 12px;
+        font-size: 13px;
+        border-radius: 8px;
+      }
+
+      /* ===== STATS GRID ===== */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      /* ===== CARD ===== */
+      .stat-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        padding: 14px;
+        border-radius: 14px;
+
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+
+        border: 1px solid rgba(255, 255, 255, 0.08);
+
+        transition: 0.2s;
+
+        cursor: pointer;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-3px);
+      }
+
+      /* ===== ICON ===== */
+      .stat-icon {
+        font-size: 22px;
+        opacity: 0.9;
+      }
+
+      /* ===== TEXT ===== */
+      .stat-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .stat-value {
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        opacity: 0.6;
+      }
+
+      .section-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 10px 0 8px 4px;
+        opacity: 0.9;
+      }
+
+      /* ===== GESTION MODERNE ===== */
+
+      .manage-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .manage-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+
+        padding: 14px;
+        border-radius: 14px;
+
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+
+        border: 1px solid rgba(255, 255, 255, 0.08);
+
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .manage-card:hover {
+        transform: translateY(-3px);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .manage-icon {
+        font-size: 22px;
+      }
+
+      .manage-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .manage-title {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .manage-desc {
+        font-size: 11px;
+        opacity: 0.6;
+      }
+
+      /* ===== GESTION BADGE ===== */
+
+      .manage-card {
+        position: relative; /* IMPORTANT */
+      }
+
+      .manage-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+
+        background: gray;
+        opacity: 0.5;
+      }
+
+      /* actif */
+      .manage-badge.active {
+        background: #22c55e;
+        opacity: 1;
+      }
+
+      /* ===== ACCOUNT GRID (comme stats) ===== */
+      .account-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      /* ===== ACCOUNT CARD ===== */
+      .account-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        padding: 14px;
+        border-radius: 14px;
+
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+
+        border: 1px solid rgba(255, 255, 255, 0.08);
+
+        transition: 0.2s;
+        cursor: pointer;
+      }
+
+      .account-card:hover {
+        transform: translateY(-3px);
+      }
+
+      /* ICON */
+      .account-icon {
+        font-size: 22px;
+        opacity: 0.9;
+      }
+
+      /* TEXT */
+      .account-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .account-title {
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .account-desc {
+        font-size: 11px;
+        opacity: 0.6;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1 id="welcome"></h1>
+      <button class="logout" onclick="logout()">Déconnexion</button>
+    </header>
+
+    <div class="container">
+      <div class="card status-card">
+        <div class="status-header">
+          <h3>
+            Statut du compte:
+            <span id="badge"></span>
+          </h3>
+
+          <button id="publishBtn" class="btn primary small-btn">
+            🚀 Publier
+          </button>
+        </div>
+
+        <!-- ✅ TEXTE AJOUTÉ -->
+        <p id="statusMessage" class="status"></p>
+      </div>
+
+      <!-- PARTIE STATISTIQUE -->
+      <h3 class="section-title">📊 Statistiques</h3>
+
+      <div class="stats-grid">
+        <!-- 🔥 PRIORITÉ -->
+        <div class="stat-card" onclick="goVisits()">
+          <div class="stat-icon">👁</div>
+          <div class="stat-info">
+            <span class="stat-value" id="statViews">0</span>
+            <span class="stat-label">Visites</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🖱</div>
+          <div class="stat-info">
+            <span class="stat-value" id="statClicks">0</span>
+            <span class="stat-label">Clics</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🔥</div>
+          <div class="stat-info">
+            <span class="stat-value" id="topProduct">-</span>
+            <span class="stat-label">Top produit</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🐢</div>
+          <div class="stat-info">
+            <span class="stat-value" id="lowProduct">-</span>
+            <span class="stat-label">Moins visité</span>
+          </div>
+        </div>
+
+        <!-- AUTRES -->
+        <div class="stat-card">
+          <div class="stat-icon">🗂</div>
+          <div class="stat-info">
+            <span class="stat-value" id="statCategories">0</span>
+            <span class="stat-label">Catégories</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">📦</div>
+          <div class="stat-info">
+            <span class="stat-value" id="statProducts">0</span>
+            <span class="stat-label">Produits</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🟢</div>
+          <div class="stat-info">
+            <span class="stat-value" id="statActive">0</span>
+            <span class="stat-label">Actifs</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🔴</div>
+          <div class="stat-info">
+            <span class="stat-value" id="statInactive">0</span>
+            <span class="stat-label">Inactifs</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-title">⚙️ Gestion</h3>
+
+      <div class="manage-grid">
+        <div class="manage-card" onclick="goCompany()">
+          <div class="manage-badge" id="badgeCompany"></div>
+          <div class="manage-icon">🏢</div>
+          <div class="manage-text">
+            <div class="manage-title">Entreprise</div>
+            <div class="manage-desc">Infos & coordonnées</div>
+          </div>
+        </div>
+
+        <div class="manage-card" onclick="goSlider()">
+          <div class="manage-badge" id="badgeSlider"></div>
+          <div class="manage-icon">📢</div>
+          <div class="manage-text">
+            <div class="manage-title">Bandeau</div>
+            <div class="manage-desc">Messages promotionnels</div>
+          </div>
+        </div>
+
+        <div class="manage-card" onclick="goTheme()">
+          <div class="manage-badge" id="badgeTheme"></div>
+          <div class="manage-icon">🎨</div>
+          <div class="manage-text">
+            <div class="manage-title">Thème</div>
+            <div class="manage-desc">Couleurs & style</div>
+          </div>
+        </div>
+
+        <div class="manage-card" onclick="goHeader()">
+          <div class="manage-badge" id="badgeHeader"></div>
+          <div class="manage-icon">🧩</div>
+          <div class="manage-text">
+            <div class="manage-title">Entête</div>
+            <div class="manage-desc">Logo & affichage</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-title">👤 Compte</h3>
+
+      <div class="account-grid">
+        <div class="account-card" onclick="goAccount()">
+          <div class="account-icon">👤</div>
+          <div class="account-info">
+            <span class="account-title">Infos compte</span>
+            <span class="account-desc">Nom, email</span>
+          </div>
+        </div>
+
+        <div class="account-card" onclick="goSecurity()">
+          <div class="account-icon">🔒</div>
+          <div class="account-info">
+            <span class="account-title">Sécurité</span>
+            <span class="account-desc">Mot de passe</span>
+          </div>
+        </div>
+
+        <div class="account-card" onclick="goSubscription()">
+          <div class="account-icon">💳</div>
+          <div class="account-info">
+            <span class="account-title">Abonnement</span>
+            <span class="account-desc">Statut</span>
+          </div>
+        </div>
+
+        <div class="account-card" onclick="goPreferences()">
+          <div class="account-icon">⚙️</div>
+          <div class="account-info">
+            <span class="account-title">Préférences</span>
+            <span class="account-desc">Options</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Empêcher accès sans connexion
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+      if (!user) window.location.href = "auth.html";
+
+      // FIX bouton
+      const publishBtn = document.getElementById("publishBtn");
+      const badge = document.getElementById("badge");
+
+      // Vérifier expiration abonnement
+      const today = new Date();
+      const expire = new Date(user.expireAt);
+
+      if (today > expire) {
+        user.isPaid = false;
+        localStorage.setItem("currentUser", JSON.stringify(user)); // ✅ corrigé
+      }
+
+      document.getElementById("welcome").textContent = "Bienvenue " + user.name;
+
+      const statusMessage = document.getElementById("statusMessage");
+      // ✅ LOGIQUE STATUT SIMPLE TEXTE
+      if (user.isPaid) {
+        badge.textContent = "Actif";
+        badge.className = "active";
+
+        statusMessage.textContent = "Votre catalogue est en ligne";
+
+        publishBtn.textContent = "👀 Voir";
+        publishBtn.onclick = () => (window.location.href = "index.html");
+      } else {
+        badge.textContent = "Inactif";
+        badge.className = "inactive";
+
+        statusMessage.textContent = "Votre catalogue n'est pas encore publié";
+
+        publishBtn.textContent = "🚀 Publier";
+        publishBtn.onclick = () => (window.location.href = "publish.html");
+      }
+
+      function logout() {
+        localStorage.removeItem("currentUser");
+        window.location.href = "auth.html";
+      }
+
+      function goCompany() {
+        window.location.href = "admin-company.html";
+      }
+
+      function goSlider() {
+        window.location.href = "admin-slider.html";
+      }
+
+      function goTheme() {
+        window.location.href = "admin-theme.html";
+      }
+
+      function goHeader() {
+        window.location.href = "admin-header.html";
+      }
+
+      // Partie statistique
+
+      const categories = JSON.parse(localStorage.getItem("categories") || "[]");
+      const products = JSON.parse(localStorage.getItem("products") || "[]");
+
+      // Stats simples
+      document.getElementById("statCategories").textContent = categories.length;
+      document.getElementById("statProducts").textContent = products.length;
+
+      // Exemple logique actif/inactif (à adapter selon ton système)
+      const activeProducts = products.filter((p) => p.active !== false);
+      const inactiveProducts = products.filter((p) => p.active === false);
+
+      document.getElementById("statActive").textContent = activeProducts.length;
+      document.getElementById("statInactive").textContent =
+        inactiveProducts.length;
+
+      // Simulé (tu peux améliorer plus tard)
+      // ===== VRAIES STATS =====
+
+      // total visites
+      const visitsData = JSON.parse(localStorage.getItem("visitsData") || "{}");
+
+      let totalVisits = 0;
+
+      for (let date in visitsData) {
+        totalVisits += visitsData[date];
+      }
+
+      document.getElementById("statViews").textContent = totalVisits;
+      function goVisits() {
+        window.location.href = "visites.html";
+      }
+
+      // total clics
+      const clicks = localStorage.getItem("productClicks") || 0;
+      document.getElementById("statClicks").textContent = clicks;
+
+      // ===== TOP & MOINS VISITÉ =====
+
+      const clicksByProduct = JSON.parse(
+        localStorage.getItem("clicksByProduct") || "{}",
+      );
+
+      let topIndex = null;
+      let lowIndex = null;
+
+      let maxClicks = -1;
+      let minClicks = Infinity;
+
+      // parcourir les produits
+      products.forEach((p, i) => {
+        const c = clicksByProduct[i] || 0;
+
+        if (c > maxClicks) {
+          maxClicks = c;
+          topIndex = i;
+        }
+
+        if (c < minClicks) {
+          minClicks = c;
+          lowIndex = i;
+        }
+      });
+
+      // afficher TOP
+      if (topIndex !== null && products[topIndex]) {
+        document.getElementById("topProduct").textContent =
+          products[topIndex].name || "Produit";
+      }
+
+      // afficher MOINS VISITÉ
+      if (lowIndex !== null && products[lowIndex]) {
+        document.getElementById("lowProduct").textContent =
+          products[lowIndex].name || "Produit";
+      }
+
+      // ===== BADGES GESTION =====
+
+      // ENTREPRISE
+      // ENTREPRISE (corrigé)
+      const company = JSON.parse(localStorage.getItem("siteSettings") || "{}");
+
+      if (
+        company &&
+        (company.siteName || company.whatsappNumber || company.callNumber)
+      ) {
+        document.getElementById("badgeCompany").classList.add("active");
+      }
+
+      // SLIDER
+      const slider = JSON.parse(localStorage.getItem("sliderSets") || "[]");
+      if (slider.length > 0) {
+        document.getElementById("badgeSlider").classList.add("active");
+      }
+
+      // THEME
+      const theme = JSON.parse(localStorage.getItem("siteSettings") || "null");
+      if (theme && Object.keys(theme).length > 0) {
+        document.getElementById("badgeTheme").classList.add("active");
+      }
+
+      // HEADER
+      if (theme && (theme.headerText || theme.headerLogo)) {
+        document.getElementById("badgeHeader").classList.add("active");
+      }
+
+      function goAccount() {
+        window.location.href = "admin-account.html";
+      }
+
+      function goSecurity() {
+        window.location.href = "admin-security.html";
+      }
+
+      function goSubscription() {
+        window.location.href = "admin-subscription.html";
+      }
+
+      function goPreferences() {
+        window.location.href = "admin-preferences.html";
+      }
+    </script>
+
+    <!--- BAR DE NAVIGATION BAS---->
+    <nav class="bottom-nav">
+      <a href="dashboard.html" data-page="dashboard">
+        <div>📊</div>
+        <span>Dashboard</span>
+      </a>
+
+      <a href="admin-categories.html" data-page="categories">
+        <div>🗂</div>
+        <span>Catégories</span>
+      </a>
+
+      <a href="admin.html" data-page="products">
+        <div>📦</div>
+        <span>Produits</span>
+      </a>
+
+      <a href="admin-slider.html" data-page="slider">
+        <div>📢</div>
+        <span>Messages</span>
+      </a>
+
+      <a href="index.html" data-page="site">
+        <div>🏠</div>
+        <span>Site</span>
+      </a>
+    </nav>
+
+    <script>
+      const links = document.querySelectorAll(".bottom-nav a");
+      const currentPage = window.location.pathname.split("/").pop();
+
+      links.forEach((link) => {
+        const href = link.getAttribute("href");
+
+        if (href === currentPage) {
+          link.classList.add("active");
+        }
+      });
+    </script>
+  </body>
+</html>

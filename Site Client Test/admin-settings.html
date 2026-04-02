@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1e293b" />
+
+    <title>Admin Settings</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui;
+        background: #f5f7fb;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* ===== ZONE FIXE EXACTEMENT COMME INDEX ===== */
+      .fixed-top {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: #f5f7fb;
+      }
+
+      /* ===== HEADER (NE PAS TOUCHER) ===== */
+      #mainHeader {
+        width: 96%;
+        max-width: 580px;
+        margin: 12px auto;
+        border-radius: 18px;
+        overflow: hidden;
+        background: #0b5cff;
+        background-size: cover;
+        background-position: center;
+      }
+
+      @media (min-width: 700px) {
+        #mainHeader {
+          max-width: 860px;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        #mainHeader {
+          max-width: 1200px;
+        }
+      }
+
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 38px;
+        gap: 14px;
+        width: 100%;
+      }
+
+      .header-logo {
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        flex-shrink: 0;
+      }
+
+      .header-text {
+        font-weight: 700;
+        word-break: break-word;
+      }
+
+      /* ===== TITRE ADMIN ===== */
+      .admin-title {
+        text-align: center;
+        font-size: 20px;
+        margin: 10px 0 20px;
+      }
+
+      /* ===== CONTENU ===== */
+      .container {
+        width: 96%;
+        max-width: 900px;
+        margin: auto;
+        padding-bottom: 50px;
+      }
+
+      .card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 14px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+      }
+
+      label {
+        display: block;
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+      }
+
+      button.save-btn {
+        margin-top: 15px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        border: none;
+        background: #0b5cff;
+        color: #fff;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="fixed-top">
+      <!-- ===== HEADER IDENTIQUE INDEX ===== -->
+      <div id="mainHeader">
+        <div class="header-inner">
+          <div class="header-logo" id="headerLogoBox"></div>
+          <div class="header-text" id="headerTextBox"></div>
+        </div>
+      </div>
+
+      <div class="admin-title">Paramètres complets du site</div>
+    </div>
+
+    <div class="container">
+      <!-- ENTREPRISE -->
+      <div class="card">
+        <h3>Informations entreprise</h3>
+
+        <label>Nom entreprise</label>
+        <input id="companyName" />
+
+        <label>Numéro WhatsApp</label>
+        <input id="whatsapp" />
+
+        <label>Message WhatsApp automatique</label>
+        <textarea id="waMessage"></textarea>
+
+        <label>Numéro d'appel</label>
+        <input id="callNumber" />
+      </div>
+
+      <!-- HEADER PARAM -->
+      <div class="card">
+        <h3>Paramètres entête</h3>
+
+        <label>Texte entête</label>
+        <input id="headerTextInput" />
+
+        <label>Taille texte</label>
+        <input type="number" id="headerFontSizeInput" />
+
+        <label>Couleur texte</label>
+        <input type="color" id="headerTextColorInput" />
+
+        <label>Police</label>
+        <select id="headerFontFamilyInput">
+          <option value="system-ui">System</option>
+          <option value="serif">Serif</option>
+          <option value="sans-serif">Sans Serif</option>
+        </select>
+
+        <label>Ombre texte</label>
+        <input type="range" id="headerShadowInput" min="0" max="20" />
+
+        <label>Couleur fond</label>
+        <input type="color" id="headerBgColorInput" />
+
+        <label>Image fond</label>
+        <input type="file" id="headerBgImageInput" accept="image/*" />
+
+        <label>Logo</label>
+        <input type="file" id="headerLogoInput" accept="image/*" />
+
+        <label>Taille logo</label>
+        <input type="number" id="headerLogoSizeInput" />
+      </div>
+
+      <!-- SLIDER -->
+      <div class="card">
+        <h3>Messages bandeau slider</h3>
+
+        <label>Message 1</label>
+        <input id="promo1" />
+
+        <label>Message 2</label>
+        <input id="promo2" />
+
+        <label>Message 3</label>
+        <input id="promo3" />
+      </div>
+
+      <button class="save-btn" onclick="saveSettings()">
+        Enregistrer tous les paramètres
+      </button>
+    </div>
+
+    <script>
+      const settings = JSON.parse(localStorage.getItem("siteSettings") || "{}");
+
+      /* ===== HEADER MIRROR ===== */
+      const header = document.getElementById("mainHeader");
+      const headerTextBox = document.getElementById("headerTextBox");
+      const headerLogoBox = document.getElementById("headerLogoBox");
+
+      function getScale() {
+        const w = window.innerWidth;
+        if (w < 700) return 1;
+        if (w < 1200) return 1.4;
+        return 1.8;
+      }
+
+      function updateHeader() {
+        if (settings.headerBgImage) {
+          header.style.backgroundImage = `url(${settings.headerBgImage})`;
+        } else {
+          header.style.background = settings.headerBgColor || "#0b5cff";
+        }
+
+        const scale = getScale();
+
+        headerTextBox.textContent = settings.headerText || "";
+        headerTextBox.style.fontSize =
+          (settings.headerFontSize || 28) * scale + "px";
+        headerTextBox.style.color = settings.headerTextColor || "#fff";
+        headerTextBox.style.fontFamily =
+          settings.headerFontFamily || "system-ui";
+        headerTextBox.style.textShadow = `0 4px ${settings.headerShadow || 10}px rgba(0,0,0,.5)`;
+
+        headerLogoBox.style.width =
+          (settings.headerLogoSize || 70) * scale + "px";
+        headerLogoBox.style.height =
+          (settings.headerLogoSize || 70) * scale + "px";
+
+        if (settings.headerLogo) {
+          headerLogoBox.style.backgroundImage = `url(${settings.headerLogo})`;
+        }
+      }
+
+      window.addEventListener("resize", updateHeader);
+      updateHeader();
+
+      /* ===== LOAD INPUTS ===== */
+      [
+        "companyName",
+        "whatsapp",
+        "waMessage",
+        "callNumber",
+        "headerTextInput",
+        "headerFontSizeInput",
+        "headerTextColorInput",
+        "headerFontFamilyInput",
+        "headerShadowInput",
+        "headerBgColorInput",
+        "headerLogoSizeInput",
+        "promo1",
+        "promo2",
+        "promo3",
+      ].forEach((id) => {
+        const key = id.replace("Input", "");
+        if (settings[key]) document.getElementById(id).value = settings[key];
+      });
+
+      /* ===== SAVE ===== */
+      function saveSettings() {
+        settings.companyName = companyName.value;
+        settings.whatsapp = whatsapp.value;
+        settings.waMessage = waMessage.value;
+        settings.callNumber = callNumber.value;
+
+        settings.headerText = headerTextInput.value;
+        settings.headerFontSize = parseInt(headerFontSizeInput.value);
+        settings.headerTextColor = headerTextColorInput.value;
+        settings.headerFontFamily = headerFontFamilyInput.value;
+        settings.headerShadow = headerShadowInput.value;
+        settings.headerBgColor = headerBgColorInput.value;
+        settings.headerLogoSize = parseInt(headerLogoSizeInput.value);
+
+        settings.promos = [promo1.value, promo2.value, promo3.value];
+
+        const bgFile = headerBgImageInput.files[0];
+        const logoFile = headerLogoInput.files[0];
+
+        function finishSave() {
+          localStorage.setItem("siteSettings", JSON.stringify(settings));
+          updateHeader();
+          alert("Paramètres enregistrés !");
+        }
+
+        if (bgFile) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            settings.headerBgImage = e.target.result;
+            finishSave();
+          };
+          reader.readAsDataURL(bgFile);
+        } else if (logoFile) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            settings.headerLogo = e.target.result;
+            finishSave();
+          };
+          reader.readAsDataURL(logoFile);
+        } else {
+          finishSave();
+        }
+      }
+    </script>
+  </body>
+</html>

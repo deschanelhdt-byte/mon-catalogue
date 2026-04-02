@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1e293b" />
+
+    <title>Connexion / Inscription</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui;
+        background: #0f172a;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .box {
+        width: 90%;
+        max-width: 380px;
+        background: #1e293b;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 10px;
+        margin-top: 5px;
+        border-radius: 10px;
+        border: none;
+        background: #334155;
+        color: white;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        background: #22c55e;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      .switch {
+        text-align: center;
+        margin-top: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #94a3b8;
+      }
+
+      .error {
+        color: #f87171;
+        font-size: 13px;
+        text-align: center;
+        margin-top: 6px;
+      }
+
+      .forgot {
+        font-size: 13px;
+        color: #94a3b8;
+        text-align: center;
+        cursor: pointer;
+        margin-bottom: 10px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="box">
+      <h2 id="title">Créer un compte</h2>
+
+      <input id="name" placeholder="Nom" />
+      <input id="phone" placeholder="Téléphone" />
+      <input id="email" placeholder="Email" />
+      <input id="password" type="password" placeholder="Mot de passe" />
+      <input
+        id="confirmPassword"
+        type="password"
+        placeholder="Confirmer le mot de passe"
+      />
+
+      <button onclick="submitForm()">Continuer</button>
+
+      <div
+        id="forgot"
+        class="forgot"
+        style="display: none"
+        onclick="resetPassword()"
+      >
+        Mot de passe oublié ?
+      </div>
+      <div class="switch" onclick="toggleMode()" id="switchText">
+        Déjà un compte ? Se connecter
+      </div>
+
+      <div id="error" class="error"></div>
+    </div>
+
+    <script>
+      let isLogin = false;
+
+      function toggleMode() {
+        isLogin = !isLogin;
+
+        document.getElementById("title").textContent = isLogin
+          ? "Connexion"
+          : "Créer un compte";
+
+        document.getElementById("name").style.display = isLogin
+          ? "none"
+          : "block";
+        document.getElementById("phone").style.display = isLogin
+          ? "none"
+          : "block";
+        document.getElementById("confirmPassword").style.display = isLogin
+          ? "none"
+          : "block";
+        document.getElementById("forgot").style.display = isLogin
+          ? "block"
+          : "none";
+
+        document.getElementById("switchText").textContent = isLogin
+          ? "Pas de compte ? S'inscrire"
+          : "Déjà un compte ? Se connecter";
+
+        document.getElementById("error").textContent = "";
+      }
+
+      function submitForm() {
+        const name = document.getElementById("name").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const confirmPassword = document
+          .getElementById("confirmPassword")
+          .value.trim();
+        const errorBox = document.getElementById("error");
+
+        errorBox.textContent = "";
+
+        let users = JSON.parse(localStorage.getItem("users") || "[]");
+
+        if (isLogin) {
+          // LOGIN
+          const user = users.find(
+            (u) => u.email === email && u.password === password,
+          );
+
+          if (!user) {
+            errorBox.textContent = "Identifiants incorrects";
+            return;
+          }
+
+          localStorage.setItem("currentUser", JSON.stringify(user));
+          window.location.href = "dashboard.html";
+        } else {
+          // SIGNUP
+          if (!name || !phone || !email || !password || !confirmPassword) {
+            errorBox.textContent = "Remplis tous les champs";
+            return;
+          }
+
+          if (password !== confirmPassword) {
+            errorBox.textContent = "Les mots de passe ne correspondent pas";
+            return;
+          }
+
+          const exists = users.some((u) => u.email === email);
+
+          if (exists) {
+            errorBox.textContent = "Email déjà utilisé";
+            return;
+          }
+
+          const newUser = {
+            name,
+            phone,
+            email,
+            password,
+            isPaid: false,
+            createdAt: new Date().toISOString(),
+          };
+
+          users.push(newUser);
+          localStorage.setItem("users", JSON.stringify(users));
+          localStorage.setItem("currentUser", JSON.stringify(newUser));
+
+          window.location.href = "dashboard.html";
+        }
+      }
+
+      function resetPassword() {
+        const email = prompt(
+          "Entrez votre email pour réinitialiser le mot de passe:",
+        );
+        if (!email) return;
+
+        let users = JSON.parse(localStorage.getItem("users") || "[]");
+        const user = users.find((u) => u.email === email);
+
+        if (!user) {
+          alert("Email introuvable");
+          return;
+        }
+
+        const newPass = prompt("Entrez votre nouveau mot de passe:");
+        if (!newPass) return;
+
+        user.password = newPass;
+        localStorage.setItem("users", JSON.stringify(users));
+        alert("Mot de passe mis à jour ✅");
+      }
+
+      // Initialiser
+      toggleMode(); // Assure affichage correct au chargement
+    </script>
+  </body>
+</html>

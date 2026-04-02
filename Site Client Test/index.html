@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1e293b" />
+
+    <title>Catalogue</title>
+
+    <!-- FONTS -->
+    <style>
+      @font-face {
+        font-family: "birds-of-paradise";
+        src: url("fonts/birds-of-paradise.ttf");
+      }
+      @font-face {
+        font-family: "faith";
+        src: url("fonts/faith.ttf");
+      }
+      @font-face {
+        font-family: "floraison-des-amours";
+        src: url("fonts/floraison-des-amours.ttf");
+      }
+      @font-face {
+        font-family: "sparkling-valentine";
+        src: url("fonts/sparkling-valentine.ttf");
+      }
+      @font-face {
+        font-family: "valentine-delight";
+        src: url("fonts/valentine-delight.ttf");
+      }
+      @font-face {
+        font-family: "valen-valentine";
+        src: url("fonts/valen-valentine.ttf");
+      }
+      @font-face {
+        font-family: "when-the-stars-align";
+        src: url("fonts/when-the-stars-align.ttf");
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: system-ui;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .fixed-top {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: var(--bg);
+      }
+
+      #mainHeader {
+        width: 96%;
+        max-width: 580px;
+        margin: 12px auto;
+        border-radius: 18px;
+        overflow: hidden;
+        background: var(--primary);
+        position: relative;
+        height: 160px;
+      }
+      #mainHeaderInner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .header-logo {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        transform: translate(-50%, -50%);
+      }
+      .header-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--headerText);
+        white-space: nowrap;
+        transform: translate(-50%, -50%);
+        text-align: center;
+      }
+
+      #promoSlider {
+        margin: 6px auto 10px;
+        width: 70%;
+        max-width: 420px;
+        padding: 8px 14px;
+        text-align: center;
+        border-radius: 999px;
+        font-size: 14px;
+        background: var(--primary);
+        color: var(--headerText);
+        transition:
+          opacity 0.4s ease-in,
+          transform 0.4s ease-in;
+      }
+      #promoSlider.fade-out {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+
+      .search {
+        padding: 10px 12px;
+      }
+      .search input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 999px;
+        border: none;
+        background: var(--cardBg);
+        color: var(--text);
+      }
+
+      #categories {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 8px 12px 12px;
+      }
+      .cat-btn {
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: none;
+        background: var(--cardBg);
+        color: var(--text);
+        cursor: pointer;
+      }
+      .cat-btn.active {
+        background: var(--categoryActiveBg);
+        color: var(--categoryActiveText);
+      }
+
+      #productsContainer {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px 12px 20px;
+      }
+      #products {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+
+      .card {
+        background: var(--cardBg);
+        border-radius: 16px;
+        padding: 10px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .card img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        object-position: center;
+        border-radius: 14px;
+      }
+      .meta button {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 999px;
+        cursor: pointer;
+        background: var(--primary);
+        color: var(--buttonText);
+      }
+
+      .card {
+        position: relative; /* IMPORTANT pour le badge */
+      }
+
+      /* ===== BADGE PROMO ===== */
+      .promo-badge {
+        position: absolute;
+        top: -2px;
+        right: 1px;
+
+        width: 60px; /* 🔧 MODIFIABLE */
+        height: 22px; /* 🔧 MODIFIABLE */
+
+        background: red;
+        border-radius: 10%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: white;
+        font-size: 14px; /* 🔧 MODIFIABLE */
+        font-weight: bold;
+
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      }
+      /* ===== BOUTON FLECHE DETAILS ===== */
+      .details-btn {
+        position: absolute;
+        bottom: 8px; /* 🔧 MODIFIABLE */
+        right: 8px; /* 🔧 MODIFIABLE */
+
+        width: 32px; /* 🔧 MODIFIABLE */
+        height: 32px; /* 🔧 MODIFIABLE */
+
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+
+        background: transparent;
+        color: var(--primary);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 22px; /* 🔧 MODIFIABLE */
+        font-weight: bold;
+
+        box-shadow: none;
+      }
+
+      /* espace en bas pour éviter que le texte touche la flèche */
+      .card-content {
+        padding-bottom: 40px;
+      }
+
+      /* ===== POSTÉ IL Y A ===== */
+      .posted-time {
+        font-size: 12px;
+        opacity: 0.6;
+        margin-top: 4px;
+      }
+      /* ===== TEXTE PRODUITS ===== */
+      .card h4 {
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .card b {
+        font-size: 16px;
+        color: var(--primary);
+      }
+
+      .card s {
+        font-size: 14px;
+        opacity: 0.7;
+      }
+
+      .posted-time {
+        font-size: 11px;
+      }
+
+      /* ===== FLECHE MOBILE ===== */
+      .details-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 15px;
+      }
+
+      /* ================= TABLETTE ================= */
+      @media (min-width: 768px) and (max-width: 1023px) {
+        #mainHeader {
+          height: 220px;
+          max-width: 800px;
+        }
+
+        .header-text {
+          font-size: 45px;
+        }
+
+        #promoSlider {
+          font-size: 20px;
+          padding: 12px 22px;
+          max-width: 550px;
+        }
+
+        /* ✅ 2 COLONNES EN TABLETTE */
+        #products {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 18px;
+        }
+
+        /* images plus grandes */
+        .card img {
+          width: 100%;
+          aspect-ratio: 1 / 1;
+          object-fit: cover;
+          height: 350px;
+        }
+
+        .card {
+          padding: 15px;
+        }
+
+        .card h4 {
+          font-size: 20px;
+        }
+
+        .card b {
+          font-size: 22px;
+          color: var(--primary);
+        }
+        .promo-badge {
+          width: 90px; /* 🔧 MODIFIABLE */
+          height: 35px; /* 🔧 MODIFIABLE */
+          font-size: 20px;
+        }
+
+        .card s {
+          font-size: 16px;
+        }
+        .posted-time {
+          font-size: 13px;
+        }
+        /* flèche plus grande */
+        .details-btn {
+          width: 50px;
+          height: 50px;
+          font-size: 30px;
+        }
+      }
+
+      /* ================= DESKTOP ================= */
+      @media (min-width: 1024px) {
+        #mainHeader {
+          height: 240px;
+          max-width: 900px;
+        }
+
+        .header-text {
+          font-size: 50px;
+        }
+
+        #promoSlider {
+          font-size: 25px;
+          max-width: 600px;
+        }
+
+        #products {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 20px;
+        }
+
+        .card img {
+          height: 220px;
+        }
+
+        .card {
+          padding: 14px;
+        }
+
+        .card h4 {
+          font-size: 20px;
+        }
+
+        .card b {
+          width: 100px; /* 🔧 MODIFIABLE */
+          height: 40px; /* 🔧 MODIFIABLE */
+          font-size: 25px;
+          color: var(--primary);
+        }
+        .promo-badge {
+          font-size: 16px;
+        }
+
+        .card s {
+          font-size: 18px;
+        }
+
+        .posted-time {
+          font-size: 14px;
+        }
+
+        /* flèche encore plus visible */
+        .details-btn {
+          width: 44px;
+          height: 44px;
+          font-size: 20px;
+        }
+
+        /* petit effet premium desktop */
+        .card:hover {
+          transform: translateY(-4px);
+          transition: 0.2s ease;
+        }
+
+        .card {
+          cursor: pointer;
+          transition: 0.2s ease;
+        }
+
+        .card:hover {
+          transform: translateY(-6px);
+        }
+      }
+
+      .float-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+
+        padding: 12px 18px;
+
+        border: none;
+        border-radius: 999px;
+
+        background: #ff6f00;
+        color: white;
+
+        font-size: 14px;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+
+        z-index: 100;
+      }
+    </style>
+  </head>
+
+  <body>
+    <button
+      id="cartBtn"
+      class="float-btn"
+      style="right: 16px; background: #ff6f00"
+    >
+      Voir le panier 🛒
+    </button>
+
+    <div class="fixed-top">
+      <div id="mainHeader">
+        <div id="mainHeaderInner">
+          <div class="header-logo" id="headerLogoBox"></div>
+          <div class="header-text" id="headerTextBox"></div>
+        </div>
+      </div>
+
+      <div id="promoSlider"></div>
+
+      <div class="search">
+        <input id="searchInput" placeholder="Rechercher un produit..." />
+      </div>
+
+      <div id="categories"></div>
+    </div>
+
+    <div id="productsContainer">
+      <div id="products"></div>
+    </div>
+
+    <script src="theme.js"></script>
+    <script>
+      // ===== VISITES =====
+      let visits = parseInt(localStorage.getItem("siteVisits") || "0");
+      visits++;
+
+      localStorage.setItem("siteVisits", visits);
+
+      // 🔥 historique
+      let visitsHistory = JSON.parse(
+        localStorage.getItem("visitsHistory") || "[]",
+      );
+
+      visitsHistory.push(visits);
+
+      // garder seulement les 20 derniers points
+      if (visitsHistory.length > 20) visitsHistory.shift();
+
+      localStorage.setItem("visitsHistory", JSON.stringify(visitsHistory));
+      const settings = JSON.parse(localStorage.getItem("siteSettings") || "{}");
+      applyTheme(settings.activeTheme || "light");
+
+      const headerTextBox = document.getElementById("headerTextBox");
+      const headerLogoBox = document.getElementById("headerLogoBox");
+      const mainHeader = document.getElementById("mainHeader");
+
+      /* HEADER */
+      headerTextBox.textContent = settings.headerText || "Mon Catalogue";
+      headerTextBox.style.fontFamily = settings.headerFont || "sans-serif";
+
+      if (settings.headerLogo)
+        headerLogoBox.style.backgroundImage = `url(${settings.headerLogo})`;
+
+      const logoPos = settings.logoPos || { x: 0, y: 0 };
+      const textPos = settings.textPos || { x: 0, y: 0 };
+
+      headerLogoBox.style.transform = `translate(-50%, -50%) translate(${logoPos.x}px, ${logoPos.y}px)`;
+      headerTextBox.style.transform = `translate(-50%, -50%) translate(${textPos.x}px, ${textPos.y}px)`;
+
+      /* IMAGE DE FOND */
+      if (settings.bgMode === "image" && settings.headerBg) {
+        mainHeader.style.backgroundImage = `url(${settings.headerBg})`;
+        mainHeader.style.backgroundSize = "cover";
+        mainHeader.style.backgroundPosition = "center";
+      } else {
+        mainHeader.style.backgroundImage = "";
+      }
+
+      /* MODES */
+      const mode = settings.displayMode || "logo-text";
+      headerTextBox.style.display =
+        mode === "text-only" || mode === "logo-text" ? "block" : "none";
+      headerLogoBox.style.display =
+        mode === "logo-only" || mode === "logo-text" ? "block" : "none";
+
+      if (mode === "bg-only") {
+        headerTextBox.style.display = "none";
+        headerLogoBox.style.display = "none";
+      }
+
+      /* COULEUR TEXTE HEADER SI IMAGE + TEXTE VISIBLE */
+      if (
+        (mode === "text-only" || mode === "logo-text") &&
+        settings.bgMode === "image"
+      ) {
+        headerTextBox.style.color =
+          settings.headerTextColor || headerTextBox.style.color || "#fff";
+      }
+
+      /* RESTE DU JS PRODUITS / SEARCH / SLIDER (identique) */
+      // PRODUITS
+      const products = JSON.parse(localStorage.getItem("products") || "[]");
+      const savedCategories = JSON.parse(
+        localStorage.getItem("categories") || "[]",
+      );
+      const promoBox = document.getElementById("promoSlider");
+      const sliderSets = JSON.parse(localStorage.getItem("sliderSets") || "[]");
+      const activePromo = sliderSets.find((s) => s.active);
+
+      // COMPTEURS CLICS
+      let productClicks = parseInt(
+        localStorage.getItem("productClicks") || "0",
+      );
+      let clicksByProduct = JSON.parse(
+        localStorage.getItem("clicksByProduct") || "{}",
+      );
+
+      if (
+        !activePromo ||
+        !activePromo.messages ||
+        activePromo.messages.length === 0
+      ) {
+        promoBox.style.display = "none";
+      } else {
+        promoBox.style.display = "block";
+
+        /* appliquer couleur */
+
+        promoBox.style.setProperty("color", activePromo.color, "important");
+        promoBox.style.setProperty("color", activePromo.color, "important");
+
+        promoBox.style.fontFamily = activePromo.font;
+
+        /* appliquer police */
+
+        if (activePromo.font === "sans-serif semi-bold") {
+          promoBox.style.fontWeight = "600";
+        } else if (activePromo.font === "sans-serif bold") {
+          promoBox.style.fontWeight = "700";
+        } else {
+          promoBox.style.fontWeight = "400";
+        }
+
+        /* vitesse */
+
+        const speed = parseInt(activePromo.speed) || 3000;
+
+        const slides = activePromo.messages;
+
+        let index = 0;
+
+        function showSlide(i) {
+          promoBox.textContent = slides[i].text || "";
+        }
+
+        showSlide(index);
+
+        setInterval(() => {
+          promoBox.classList.add("fade-out");
+
+          setTimeout(() => {
+            index = (index + 1) % slides.length;
+
+            showSlide(index);
+
+            promoBox.classList.remove("fade-out");
+          }, 400);
+        }, speed);
+      }
+
+      const searchInput = document.getElementById("searchInput");
+      const productsBox = document.getElementById("products");
+      const catBox = document.getElementById("categories");
+
+      let cats = ["Tout", ...savedCategories];
+      let currentCat = "Tout";
+
+      function renderCats() {
+        catBox.innerHTML = cats
+          .map(
+            (c) =>
+              `<button class="cat-btn ${c === currentCat ? "active" : ""}" onclick="setCat('${c}')">${c}</button>`,
+          )
+          .join("");
+      }
+
+      function setCat(c) {
+        currentCat = c;
+        renderCats();
+        renderProducts();
+      }
+
+      function timeAgo(date) {
+        if (!date) return "";
+
+        const now = new Date();
+        const posted = new Date(date);
+        const diff = Math.floor((now - posted) / 1000);
+
+        const minutes = Math.floor(diff / 60);
+        const hours = Math.floor(diff / 3600);
+        const days = Math.floor(diff / 86400);
+
+        if (minutes < 1) return "Posté à l’instant";
+        if (minutes < 60) return `Posté il y a ${minutes} min`;
+        if (hours < 24) return `Posté il y a ${hours} h`;
+        return `Posté il y a ${days} j`;
+      }
+
+      function renderProducts() {
+        const q = (searchInput.value || "").toLowerCase();
+
+        const list = products.filter((p) => {
+          const cat = (p.cat || p.category || "").trim();
+          const okCat = currentCat === "Tout" || cat === currentCat;
+          const okSearch = (p.name || "").toLowerCase().includes(q);
+          return okCat && okSearch && p.active !== false;
+        });
+
+        productsBox.innerHTML = list
+          .map((p) => {
+            const showPrice = p.priceActive !== false;
+            const showPromo = p.promoActive !== false && p.promo;
+            const showMin = p.minQtyActive !== false && p.minQty;
+
+            return `
+<div class="card" data-index="${products.indexOf(p)}" onclick="openDetails(${products.indexOf(p)})">
+
+  ${showPromo ? `<div class="promo-badge">PROMO</div>` : ""}
+
+  <img src="${p.main}">
+
+  <div class="card-content">
+    <h4>${p.name || ""}</h4>
+
+    
+
+    ${
+      showPrice === false
+        ? `<b style="color: var(--primary);">Prix sur demande</b>`
+        : showPromo
+          ? `<s>${p.price}</s> <b>${p.promo}</b>`
+          : `<b>${p.price || ""}</b>`
+    }
+
+    ${
+      showMin
+        ? `<div style="font-size:13px; opacity:0.7;">Quantité minimum : ${p.minQty}</div>`
+        : ""
+    }
+
+    <div class="posted-time">${timeAgo(p.time)}</div>
+  </div>
+
+  <button class="details-btn" onclick="event.stopPropagation(); openDetails(${products.indexOf(p)})">
+    →
+  </button>
+</div>
+      `;
+          })
+          .join("");
+      }
+
+      // Dans openDetails() côté catalogue
+      function openDetails(i) {
+        // compteur global
+        productClicks++;
+        localStorage.setItem("productClicks", productClicks);
+
+        // clics par produit
+        clicksByProduct[i] = (clicksByProduct[i] || 0) + 1;
+        localStorage.setItem(
+          "clicksByProduct",
+          JSON.stringify(clicksByProduct),
+        );
+
+        // --- HISTORIQUE DES CLICS ---
+        let clicksHistory = JSON.parse(
+          localStorage.getItem("clicksHistory") || "[]",
+        );
+        clicksHistory.push(productClicks); // ajouter valeur actuelle
+        if (clicksHistory.length > 20) clicksHistory.shift(); // garder les 20 derniers points
+        localStorage.setItem("clicksHistory", JSON.stringify(clicksHistory));
+
+        location.href = `details.html?id=${i}`;
+      }
+      // Init
+      searchInput.oninput = renderProducts;
+      renderCats();
+      renderProducts();
+
+      const cartBtn = document.getElementById("cartBtn");
+      cartBtn.onclick = () => (window.location.href = "panier.html");
+
+      // Empêcher accès sans connexion
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+
+      if (!user) {
+        window.location.href = "auth.html";
+      } else {
+        // stocker ownerId pour notifications
+        localStorage.setItem("ownerId", user.email);
+      }
+
+      // --- Notification push --- //
+
+      async function askNotificationPermission() {
+        const permission = await Notification.requestPermission();
+
+        if (permission === "granted") {
+          console.log("Notifications autorisées ✅");
+          await registerServiceWorker();
+        } else {
+          console.log("Notifications refusées ❌");
+        }
+      }
+
+      async function registerServiceWorker() {
+        if ("serviceWorker" in navigator) {
+          try {
+            const registration =
+              await navigator.serviceWorker.register("sw.js");
+            console.log("Service Worker enregistré ✅");
+            await subscribeUser(registration);
+          } catch (err) {
+            console.error("Erreur SW:", err);
+          }
+        }
+      }
+
+      async function subscribeUser(registration) {
+        try {
+          const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: "TA_CLE_VAPID_PUBLIC", // remplacer par votre vraie clé
+          });
+
+          await fetch("/subscribe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              subscription,
+              ownerId: localStorage.getItem("ownerId"),
+            }),
+          });
+
+          console.log("Utilisateur abonné aux notifications ✅");
+        } catch (err) {
+          console.error("Erreur subscription:", err);
+        }
+      }
+
+      // lancer la permission dès que la page charge
+      askNotificationPermission();
+
+      const today = new Date().toISOString().split("T")[0];
+
+      let visitsData = JSON.parse(localStorage.getItem("visitsData") || "{}");
+
+      visitsData[today] = (visitsData[today] || 0) + 1;
+
+      localStorage.setItem("visitsData", JSON.stringify(visitsData));
+    </script>
+  </body>
+</html>

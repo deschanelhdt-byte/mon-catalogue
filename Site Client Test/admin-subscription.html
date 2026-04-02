@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1e293b" />
+
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui;
+        background: #0f172a;
+        color: white;
+      }
+      header {
+        padding: 14px;
+        background: #1e293b;
+        display: flex;
+        gap: 10px;
+      }
+
+      .container {
+        padding: 16px;
+      }
+
+      .card {
+        padding: 16px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .status {
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .active {
+        color: #22c55e;
+      }
+      .inactive {
+        color: #ef4444;
+      }
+
+      .btn {
+        margin-top: 10px;
+        width: 100%;
+        padding: 14px;
+        border-radius: 10px;
+        border: none;
+        background: #22c55e;
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div onclick="back()">⬅️</div>
+      <b>Abonnement</b>
+    </header>
+
+    <div class="container">
+      <div class="card">
+        <div id="status" class="status"></div>
+        <p id="date"></p>
+
+        <button class="btn" onclick="pay()">🚀 Activer</button>
+      </div>
+    </div>
+
+    <script>
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+
+      const status = document.getElementById("status");
+      const date = document.getElementById("date");
+
+      if (user.isPaid) {
+        status.textContent = "Actif";
+        status.className = "status active";
+        date.textContent = "Expire le : " + user.expireAt;
+      } else {
+        status.textContent = "Inactif";
+        status.className = "status inactive";
+      }
+
+      function pay() {
+        user.isPaid = true;
+
+        let d = new Date();
+        d.setMonth(d.getMonth() + 1);
+
+        user.expireAt = d.toISOString();
+
+        localStorage.setItem("currentUser", JSON.stringify(user));
+
+        location.reload();
+      }
+
+      function back() {
+        location.href = "dashboard.html";
+      }
+    </script>
+  </body>
+</html>
