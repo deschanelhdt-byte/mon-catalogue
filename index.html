@@ -65,12 +65,12 @@
       #mainHeader {
         width: 96%;
         max-width: 580px;
-        margin: 12px auto;
+        margin: 8px auto;
         border-radius: 18px;
         overflow: hidden;
         background: var(--primary);
         position: relative;
-        height: 160px;
+        height: 120px;
       }
       #mainHeaderInner {
         position: relative;
@@ -82,8 +82,8 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        width: 100px;
-        height: 100px;
+        width: 70px;
+        height: 70px;
         border-radius: 50%;
         background-size: cover;
         background-position: center;
@@ -93,7 +93,7 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        font-size: 28px;
+        font-size: 22px;
         font-weight: 700;
         color: var(--headerText);
         white-space: nowrap;
@@ -130,6 +130,12 @@
         border: none;
         background: var(--cardBg);
         color: var(--text);
+        font-size: 16px; /* 🔥 IMPORTANT */
+      }
+
+      input,
+      textarea {
+        font-size: 16px;
       }
 
       #categories {
@@ -225,8 +231,8 @@
         border: none;
         cursor: pointer;
 
-        background: transparent;
-        color: var(--primary);
+        background: var(--primary);
+        color: white;
 
         display: flex;
         align-items: center;
@@ -279,12 +285,17 @@
       /* ================= TABLETTE ================= */
       @media (min-width: 768px) and (max-width: 1023px) {
         #mainHeader {
-          height: 220px;
+          height: 110px;
           max-width: 800px;
         }
 
         .header-text {
-          font-size: 45px;
+          font-size: 20px;
+        }
+
+        .header-logo {
+          width: 60px;
+          height: 60px;
         }
 
         #promoSlider {
@@ -537,6 +548,8 @@
           settings.headerTextColor || headerTextBox.style.color || "#fff";
       }
 
+      const currency = settings.currency || "FCFA";
+
       /* RESTE DU JS PRODUITS / SEARCH / SLIDER (identique) */
       // PRODUITS
       const products = JSON.parse(localStorage.getItem("products") || "[]");
@@ -612,7 +625,12 @@
       const productsBox = document.getElementById("products");
       const catBox = document.getElementById("categories");
 
-      let cats = ["Tout", ...savedCategories];
+      let cats = [
+        "Tout",
+        ...savedCategories.filter(
+          (c) => c.toLowerCase() !== "tout" && c.toLowerCase() !== "tous",
+        ),
+      ];
       let currentCat = "Tout";
 
       function renderCats() {
@@ -679,8 +697,8 @@
       showPrice === false
         ? `<b style="color: var(--primary);">Prix sur demande</b>`
         : showPromo
-          ? `<s>${p.price}</s> <b>${p.promo}</b>`
-          : `<b>${p.price || ""}</b>`
+          ? `<s>${p.price} ${currency}</s> <b>${p.promo} ${currency}</b>`
+          : `<b>${p.price ? p.price + " " + currency : ""}</b>`
     }
 
     ${

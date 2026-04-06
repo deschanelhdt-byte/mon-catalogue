@@ -488,6 +488,15 @@
             <div class="manage-desc">Logo & affichage</div>
           </div>
         </div>
+
+        <div class="manage-card" onclick="goShare()">
+          <div class="manage-badge" id="badgeShare"></div>
+          <div class="manage-icon">🔗</div>
+          <div class="manage-text">
+            <div class="manage-title">Partager</div>
+            <div class="manage-desc">Liens & QR code</div>
+          </div>
+        </div>
       </div>
 
       <h3 class="section-title">👤 Compte</h3>
@@ -709,6 +718,17 @@
 
       function goPreferences() {
         window.location.href = "admin-preferences.html";
+      }
+
+      function goShare() {
+        window.location.href = "share.html";
+      }
+
+      // SHARE (actif si lien généré déjà utilisé une fois par exemple)
+      const hasShared = localStorage.getItem("hasShared");
+
+      if (hasShared) {
+        document.getElementById("badgeShare").classList.add("active");
       }
     </script>
 

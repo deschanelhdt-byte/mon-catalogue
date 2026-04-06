@@ -509,6 +509,14 @@
             return;
           }
 
+          if (
+            newCategory.toLowerCase() === "tout" ||
+            newCategory.toLowerCase() === "tous"
+          ) {
+            alert("Ce nom est réservé ❌");
+            return;
+          }
+
           const oldName = categories[editIndex];
           categories[editIndex] = value;
 

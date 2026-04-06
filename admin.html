@@ -1052,6 +1052,9 @@
       let editIndex = null;
       let currentMainImage = "";
 
+      const settings = JSON.parse(localStorage.getItem("siteSettings") || "{}");
+      const currency = settings.currency || "FCFA";
+
       const pName = document.getElementById("pName"),
         pDesc = document.getElementById("pDesc"),
         pPrice = document.getElementById("pPrice"),
@@ -1147,8 +1150,8 @@
           ${
             p.priceActive
               ? p.promoActive && p.promo
-                ? `<s>${p.price} FCFA</s> <b>${p.promo} FCFA</b>`
-                : `<b>${p.price} FCFA</b>`
+                ? `<s>${p.price} ${currency}</s> <b>${p.promo} ${currency}</b>`
+                : `<b>${p.price} ${currency}</b>`
               : ""
           }
           ${p.minQtyActive ? `<div class="min-qty-badge">QMC : ${p.minQty}</div>` : ""}

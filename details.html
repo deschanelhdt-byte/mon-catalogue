@@ -90,6 +90,7 @@
         width: 100%;
         height: 100%;
         object-fit: contain;
+        display: none; /* 🔥 IMPORTANT */
       }
 
       .carousel img.active {
@@ -494,6 +495,7 @@
         window.location.href = "auth.html";
       }
       const settings = JSON.parse(localStorage.getItem("siteSettings") || "{}");
+      const currency = settings.currency || "FCFA";
       document.getElementById("siteName").textContent =
         settings.siteName || "Nom Entreprise";
 
@@ -522,9 +524,9 @@
 
       if (showPrice && showPromo) {
         promoTag.innerHTML = '<span class="promo-tag">🔥 En promo</span>';
-        priceBox.innerHTML = `<s>${product.price} FCFA</s> <b style="color: var(--price-color);">${product.promo} FCFA</b>`;
+        priceBox.innerHTML = `<s>${product.price} ${currency}</s> <b style="color: var(--price-color);">${product.promo} ${currency}</b>`;
       } else if (showPrice) {
-        priceBox.innerHTML = `<b style="color: var(--price-color);">${product.price} FCFA</b>`;
+        priceBox.innerHTML = `<b style="color: var(--price-color);">${product.price} ${currency}</b>`;
       } else {
         priceBox.innerHTML = `<b style="color: var(--price-color);">Prix sur demande</b>`;
       }

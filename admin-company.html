@@ -110,6 +110,14 @@
           <option value="livraison">Livraison / RDV</option>
         </select>
 
+        <label for="currency">Devise monétaire</label>
+        <select id="currency">
+          <option value="FCFA">FCFA</option>
+          <option value="XOF">XOF</option>
+          <option value="€">Euro (€)</option>
+          <option value="$">Dollar ($)</option>
+        </select>
+
         <button id="saveBtn">💾 Enregistrer</button>
         <div id="msg" class="message"></div>
       </div>
@@ -139,6 +147,8 @@
       document.getElementById("formType").value =
         settings.formType || "rendezvous";
 
+      document.getElementById("currency").value = settings.currency || "FCFA";
+
       const msg = document.getElementById("msg");
 
       document.getElementById("saveBtn").onclick = () => {
@@ -157,6 +167,8 @@
           .value.trim();
         settings.productType = document.getElementById("productType").value;
         settings.formType = document.getElementById("formType").value;
+
+        settings.currency = document.getElementById("currency").value;
 
         localStorage.setItem("siteSettings", JSON.stringify(settings));
 

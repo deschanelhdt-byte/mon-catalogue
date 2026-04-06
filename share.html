@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1e293b" />
+
+    <link rel="icon" href="icon-192.png" />
+
+    <title>Partager les liens</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bottom-nav-height: 65px;
+      }
+
+      body {
+        font-family: system-ui, sans-serif;
+        background: #f4f6fb;
+        margin: 0;
+        padding: 20px;
+        color: #1c1c1c;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+      }
+
+      .link-card {
+        background: #fff;
+        padding: 16px;
+        margin-bottom: 20px;
+        border-radius: 12px;
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+
+      /* 🔲 carré QR */
+      .qr-box {
+        width: 130px;
+        height: 130px;
+        border: 2px solid #e2e5ec;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .qr-box canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      .download-btn {
+        margin-top: 6px;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        background: #0b5cff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      /* 👉 partie droite */
+      .right-side {
+        flex: 1;
+        max-width: calc(100% - 150px); /* 🔥 évite dépassement */
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-left: 20px; /* 🔥 décalage vers la droite */
+      }
+
+      .input-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden; /* 🔥 empêche débordement */
+      }
+
+      input {
+        width: 100%;
+        max-width: 100%;
+        padding: 10px 38px 10px 12px; /* léger ajustement */
+        box-sizing: border-box; /* 🔥 TRÈS IMPORTANT */
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+      }
+
+      /* 📋 icône copier */
+      .copy-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        width: 24px;
+        height: 24px;
+      }
+
+      .copy-icon svg {
+        width: 100%;
+        height: 100%;
+        fill: transparent;
+        stroke: #8c8d8f;
+        stroke-width: 2;
+      }
+
+      .copy-icon:hover svg {
+        stroke: #0b5cff;
+      }
+
+      button {
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        background: #0b5cff;
+        color: #fff;
+        cursor: pointer;
+        font-weight: 600;
+        width: 100%;
+      }
+
+      .link-card {
+        display: flex;
+        flex-direction: row; /* 🔥 FORCÉ */
+        align-items: center;
+      }
+
+      .qr-box {
+        flex: 0 0 140px; /* taille fixe, ne bouge pas */
+      }
+
+      .right-side {
+        flex: 1; /* prend tout le reste */
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn-group button {
+        flex: 1;
+        padding: 10px 12px;
+        font-size: 13px;
+        border-radius: 8px;
+        height: auto; /* 🔥 très important */
+        min-height: 36px; /* 🔥 fixe une hauteur rectangulaire */
+      }
+
+      /* bouton principal */
+      .btn-group button:first-child {
+        background: #0b5cff;
+        color: #fff;
+      }
+
+      /* bouton secondaire */
+      .btn-group .secondary {
+        background: #eef2ff;
+        color: #0b5cff;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 12px;
+        }
+
+        h1 {
+          font-size: 20px;
+          text-align: center;
+        }
+
+        .link-card {
+          padding: 12px;
+          gap: 10px;
+        }
+
+        .qr-box {
+          flex: 0 0 100px; /* 🔥 plus petit */
+          height: 100px;
+        }
+
+        .qr-box canvas {
+          width: 80px !important;
+          height: 80px !important;
+        }
+
+        input {
+          font-size: 13px;
+          padding: 8px 36px 8px 10px;
+        }
+
+        .btn-group button {
+          padding: 8px 10px; /* 🔥 moins de hauteur */
+          font-size: 12px;
+          min-height: 34px; /* 🔥 garde forme rectangle */
+          display: flex; /* 🔥 clé principale */
+          align-items: center; /* centre vertical */
+          justify-content: center; /* centre horizontal */
+          gap: 6px; /* espace icône/texte */
+          white-space: nowrap; /* 🔥 empêche retour à la ligne */
+        }
+      }
+
+      @media (min-width: 601px) and (max-width: 1024px) {
+        .link-card {
+          padding: 14px;
+        }
+
+        .qr-box {
+          flex: 0 0 120px;
+          height: 120px;
+        }
+
+        .qr-box canvas {
+          width: 95px !important;
+          height: 95px !important;
+        }
+
+        button {
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Partager vos pages</h1>
+
+    <!-- INDEX -->
+    <div class="link-card">
+      <div class="qr-box" id="qrIndex"></div>
+
+      <div class="right-side">
+        <label>Lien vers index.html</label>
+
+        <div class="input-wrapper">
+          <input type="text" id="indexLink" readonly />
+          <span class="copy-icon" onclick="copyLink('indexLink')">
+            <svg viewBox="0 0 24 24">
+              <rect x="4" y="4" width="12" height="12" rx="2" />
+              <rect x="8" y="8" width="12" height="12" rx="2" />
+            </svg>
+          </span>
+        </div>
+
+        <div class="btn-group">
+          <button onclick="generateQR('indexLink', 'qrIndex', 'index.pdf')">
+            🔳 Générer
+          </button>
+          <button
+            onclick="downloadPDF('qrIndex', 'index.pdf')"
+            class="secondary"
+          >
+            📄 Télécharger
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="link-card">
+      <div class="qr-box" id="qrDashboard"></div>
+
+      <div class="right-side">
+        <label>Lien vers dashboard.html</label>
+
+        <div class="input-wrapper">
+          <input type="text" id="dashboardLink" readonly />
+          <span class="copy-icon" onclick="copyLink('dashboardLink')">
+            <svg viewBox="0 0 24 24">
+              <rect x="4" y="4" width="12" height="12" rx="2" />
+              <rect x="8" y="8" width="12" height="12" rx="2" />
+            </svg>
+          </span>
+        </div>
+
+        <div class="btn-group">
+          <button
+            onclick="
+              generateQR('dashboardLink', 'qrDashboard', 'dashboard.pdf')
+            "
+          >
+            🔳 Générer
+          </button>
+
+          <button
+            onclick="downloadPDF('qrDashboard', 'dashboard.pdf')"
+            class="secondary"
+          >
+            📄 Télécharger
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+      const origin = window.location.origin;
+      indexLink.value = origin + "/index.html";
+      dashboardLink.value = origin + "/dashboard.html";
+
+      function copyLink(id) {
+        const input = document.getElementById(id);
+        input.select();
+        document.execCommand("copy");
+        alert("Lien copié !");
+      }
+
+      function generateQR(inputId, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) {
+          console.error("Container introuvable :", containerId);
+          return;
+        }
+
+        container.innerHTML = "";
+
+        const link = document.getElementById(inputId).value;
+
+        // 🔥 taille du carré - marge intérieure
+        const size = container.offsetWidth - 20; // ← espace autour (10px de chaque côté)
+
+        new QRCode(container, {
+          text: link,
+          width: size,
+          height: size,
+          correctLevel: QRCode.CorrectLevel.H,
+        });
+      }
+
+      async function downloadPDF(containerId, filename) {
+        const { jsPDF } = window.jspdf;
+        const canvas = document
+          .getElementById(containerId)
+          .querySelector("canvas");
+
+        if (!canvas) return alert("Génère le QR d'abord");
+
+        const img = canvas.toDataURL("image/png");
+        const pdf = new jsPDF();
+
+        pdf.addImage(img, "PNG", 30, 30, 150, 150);
+        pdf.save(filename);
+      }
+
+      localStorage.setItem("hasShared", "true");
+    </script>
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("service-worker.js");
+      }
+    </script>
+  </body>
+</html>

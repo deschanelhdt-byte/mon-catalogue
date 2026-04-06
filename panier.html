@@ -109,15 +109,22 @@
       .order-btn {
         bottom: 20px;
         right: 20px;
-        background: var(--whatsappColor);
-        color: white;
+        background: transparent !important; /* fond transparent */
+        color: var(--primary) !important;
+        box-shadow: none !important;
+        border: 2px solid var(--primary); /* contour */
+        backdrop-filter: blur(6px); /* effet glass (optionnel) */
       }
       #totalBtn {
         bottom: 20px;
         left: 20px;
-        background: var(--primary);
-        color: white;
-        cursor: default;
+
+        background: transparent !important;
+        color: var(--primary) !important;
+
+        box-shadow: none !important;
+
+        backdrop-filter: blur(6px);
       }
 
       /* POPUPS */
@@ -176,6 +183,27 @@
       input {
         background: var(--cardBg);
         color: var(--text);
+      }
+
+      /* RESPONSIVE MOBILE & TABLETTE */
+      /* MOBILE & TABLETTE */
+      @media (max-width: 768px) {
+        .order-btn,
+        #totalBtn {
+          bottom: 20px;
+          width: 40%;
+          padding: 12px;
+          font-size: 14px;
+          border-radius: 20px;
+        }
+
+        #totalBtn {
+          left: -5%;
+        }
+
+        .order-btn {
+          right: 2%;
+        }
       }
     </style>
   </head>
@@ -248,7 +276,21 @@
 
       applyTheme();
 
+      // Récupérer les paramètres
       const settings = JSON.parse(localStorage.getItem("siteSettings") || "{}");
+
+      // Déclarer le mapping des symboles
+      const currencySymbols = {
+        FCFA: "FCFA",
+        XOF: "XOF",
+        "€": "€",
+        $: "$",
+      };
+
+      // Récupérer la devise choisie
+      const currencyCode = settings.currency || "FCFA";
+      const currency = currencySymbols[currencyCode] || currencyCode;
+
       let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
       function render() {
@@ -276,7 +318,7 @@
             // Texte à afficher
             const priceText =
               effectivePrice != null
-                ? effectivePrice + " FCFA"
+                ? effectivePrice + " " + currency
                 : "Prix sur demande";
 
             // Sous-total : si prix null => 0
@@ -294,15 +336,15 @@
             <button onclick="plus(${i})">+</button>
           </div>
           <div class="subtotal" style="font-size:13px; opacity:0.7;">
-            Sous-total: ${subtotal} FCFA
+             Sous-total: ${subtotal} ${currency}
           </div>
-       </div>
-       <div class="remove" onclick="removeItem(${i})">🗑</div>
+        </div>
+        <span class="remove" onclick="removeItem(${i})">🗑️</span>
      </div>`;
           })
           .join("");
 
-        totalBtn.textContent = `Total estimé : ${total} FCFA`;
+        totalBtn.textContent = `Total estimé : ${total} ${currency}`;
       }
 
       function plus(i) {
@@ -348,7 +390,7 @@
         cart.forEach((p) => {
           const priceExists = p.price !== null && p.price !== undefined;
           const priceText = priceExists
-            ? p.price + " FCFA"
+            ? p.price + " " + currency
             : "Prix sur demande";
           const qty = p.qty || 0;
 
@@ -357,10 +399,10 @@
           total += subtotal;
 
           // Ajouter le sous-total dans le message
-          msg += `${qty}x ${p.name} — ${priceText} — Sous-total: ${subtotal} FCFA%0A`;
+          msg += `${qty}x ${p.name} — ${priceText} — Sous-total: ${subtotal} ${currency}%0A`;
         });
 
-        msg += `%0ATotal estimé : ${total} FCFA%0A%0A`;
+        msg += `%0ATotal estimé : ${total} ${currency}%0A%0A`;
 
         let formTitle = "";
 
